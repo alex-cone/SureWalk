@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="walker_name">Your walker is on their way!</string>
+    <string name="estimated_time">ETA: 10 minutes</string>
+    <string name="requester_walking">Currently walking to: </string>
+    <string name="requester_name">Requester</string>
+</resources>

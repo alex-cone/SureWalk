@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SureWalk</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_currently__walking__requester__map__api">Map</string>
+    <string name="title_activity_currently_walking_requester_map_api">Map</string>
 </resources>
