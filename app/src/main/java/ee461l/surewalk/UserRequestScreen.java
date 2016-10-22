@@ -44,7 +44,7 @@ public class UserRequestScreen extends AppCompatActivity {
                     //Reenable all the text fields
                     enableText(address1, false);
                     enableText(address2, false);
-                    enableText(comments, true)
+                    enableText(comments, true);
                     v.setTag(1);
                 }
             }
