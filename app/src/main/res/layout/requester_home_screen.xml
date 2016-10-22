@@ -47,30 +47,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20px">
 
         <ImageView
-        android:layout_width="222dp"
-        android:layout_height="293dp"
-        android:layout_gravity="center_horizontal"
-        app:srcCompat="@drawable/SureWalkLogo"
-        android:id="@+id/imageView" />
+            android:layout_width="222dp"
+            android:layout_height="293dp"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/SureWalkLogo"
+            android:id="@+id/imageView" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Hi John!"
-            android:id="@+id/displayName"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="You have been walking for 4 hours"
-            android:id="@+id/displayTime"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"/>
+            android:text="Currently 4 Walkers"
+            android:id="@+id/textView"
+            android:layout_gravity="center" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
@@ -83,9 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="100px"
                 android:layout_gravity="center_horizontal|center"
-                android:text="View Available Walker" />
+                android:text="Request a Walker" />
 
         </LinearLayout>
-]
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
