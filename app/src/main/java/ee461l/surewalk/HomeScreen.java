@@ -1,5 +1,6 @@
 package ee461l.surewalk;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -29,14 +30,18 @@ public class HomeScreen extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<SureWalkProfile> users = new ArrayList<SureWalkProfile>();
+                Intent myIntent = new Intent(view.getContext(), LoginScreen.class);
+                startActivity(myIntent);
+               /* ArrayList<SureWalkProfile> users = new ArrayList<SureWalkProfile>();
                 users.add(new Walker());
                 users.add(new Requester());
 
                 for(SureWalkProfile user:users){
                     user.createTestUser();
                     Log.d("SureWalke", user.getEmail());
-                }
+                }*/
+
+
             }
         });
 
