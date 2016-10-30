@@ -43,9 +43,10 @@
             <!--  Email Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#372c24"
+                android:textColor="@color/login_screen_text"
                 android:text="Email"/>
-            <EditText android:layout_width="fill_parent"
+            <EditText android:id="@+id/email"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:layout_marginBottom="20dip"
@@ -53,9 +54,10 @@
             <!--  Password Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#372c24"
+                android:textColor="@color/login_screen_text"
                 android:text="Password"/>
-            <EditText android:layout_width="fill_parent"
+            <EditText android:id="@+id/password"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:singleLine="true"
@@ -67,14 +69,16 @@
                 android:layout_marginTop="10dip"
                 android:text="Login"/>
             <!-- Link to Registration Screen -->
-            <TextView android:id="@+id/link_to_register"
+            <Button
+                android:id="@+id/link_to_register"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dip"
-                android:layout_marginBottom="40dip"
-                android:text="Register here"
-                android:gravity="center"
-                android:textSize="15dip"/>
+                android:background="@null"
+                android:text="@string/btn_link_to_register"
+                android:textAllCaps="false"
+                android:textColor="@color/login_screen_text"
+                android:textSize="15dp" />
         </LinearLayout>
         <!-- Login Form Ends -->
 
