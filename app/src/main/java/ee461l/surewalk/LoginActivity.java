@@ -120,7 +120,7 @@ public class LoginActivity extends Activity {
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
-
+                    Log.d("SureWalk", "" + error);
                     // Check for error node in json
                     if (!error) {
                         // user successfully logged in
@@ -129,9 +129,10 @@ public class LoginActivity extends Activity {
 
                         // Now store the user in SQLite
                         String uid = jObj.getString("uid");
-
+                        Log.d("SureWalk", "" + uid);
                         JSONObject user = jObj.getJSONObject("user");
-                        String name = user.getString("name");
+                        Log.d("SureWalk", "" + user);
+                        String name = user.getString("username");
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
