@@ -104,9 +104,33 @@ public class RegisterActivity extends Activity {
      * */
     private void registerUser(final String username, final String email,
                               final String password) {
+
+
+        /*Check to see if email is a @utexas.edu email*/
+        if (email == null) {
+            Toast.makeText(getApplicationContext(), "Please Fillout Email", Toast.LENGTH_LONG).show();
+            return;
+
+        } else {
+            boolean result = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches(); //First check if its a valid email in general
+
+            if(!result) {
+                Toast.makeText(getApplicationContext(), "Not a valid Utexas email address", Toast.LENGTH_LONG).show();
+                return;
+
+            }
+            String emailWebsite = email.substring(email.indexOf('@'), email.length());
+            //Check to see if it is a @utexas.edu email
+            if(!emailWebsite.equals("@utexas.edu")){
+                Toast.makeText(getApplicationContext(), "Not a valid Utexas email address", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Log.d("SureWalk", ""+emailWebsite);
+
+    }
         // Tag used to cancel the request
         String tag_string_req = "req_register";
-
+        Log.d("SureWalk", "This is the email: " + email);
         pDialog.setMessage("Registering ...");
         showDialog();
 
@@ -127,9 +151,9 @@ public class RegisterActivity extends Activity {
                         // Now store the user in sqlite
                         String uid = jObj.getString("uid");
 
-                        JSONObject user = jObj.getJSONObject("username");
+                        JSONObject user = jObj.getJSONObject("user");
                         Log.d("SureWalk","" + user);
-                        String username = user.getString("user");
+                        String username = user.getString("username");
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
