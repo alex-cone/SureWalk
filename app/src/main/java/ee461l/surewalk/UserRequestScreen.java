@@ -53,7 +53,7 @@ public class UserRequestScreen extends AppCompatActivity {
     }
 
     /*
-    Will the a EditText field disabled for editing
+    Will make a EditText field disabled for editing
 
     @param  textField   The EditText object to disable
      */

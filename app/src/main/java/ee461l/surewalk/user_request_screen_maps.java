@@ -86,6 +86,7 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
             textField.setInputType(InputType.TYPE_CLASS_TEXT);
         }
         textField.setFocusable(true);
+        textField.setFocusableInTouchMode(true);
         textField.setEnabled(true);
     }
 
@@ -103,8 +104,8 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng uTexas = new LatLng(30, -97);
+        mMap.addMarker(new MarkerOptions().position(uTexas).title("University of TExas"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(uTexas));
     }
 }
