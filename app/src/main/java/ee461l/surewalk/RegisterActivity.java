@@ -1,6 +1,7 @@
 package ee461l.surewalk;
         import android.app.ProgressDialog;
         import android.content.Intent;
+        import android.net.Uri;
         import android.os.Bundle;
         import android.support.annotation.NonNull;
         import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,12 @@ package ee461l.surewalk;
         import com.google.android.gms.tasks.Task;
         import com.google.firebase.auth.AuthResult;
         import com.google.firebase.auth.FirebaseAuth;
+        import com.google.firebase.auth.FirebaseUser;
+        import com.google.firebase.auth.UserProfileChangeRequest;
+        import com.google.firebase.database.DatabaseReference;
+        import com.google.firebase.database.FirebaseDatabase;
+
+        import Users.Walker;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -25,12 +32,14 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
 
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
         firebaseAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         inputFullName = (EditText) findViewById(R.id.reg_fullname);
         inputEmail = (EditText) findViewById(R.id.reg_email);
         inputPassword = (EditText) findViewById(R.id.reg_password);
@@ -101,14 +110,13 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Not a valid Utexas email address", Toast.LENGTH_LONG).show();
                 return;
             }
-            Log.d("SureWalk", ""+emailWebsite);
 
     }
         // Tag used to cancel the request
 
         pDialog.setMessage("Registering ...");
         showDialog();
-        Log.d("sureWalk", email + " " + password);
+        Log.d("SureWalk", username + " " + email + " " + password);
 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -117,6 +125,15 @@ public class RegisterActivity extends AppCompatActivity {
                         hideDialog();
                         if(task.isSuccessful()){
                             Toast.makeText(getApplicationContext(), "User successfully registered.", Toast.LENGTH_LONG).show();
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            String userId = user.getUid();
+                            user.sendEmailVerification();
+
+                            Walker walker = new Walker();
+                            walker.setName(username);
+
+                            mDatabase.child("users").child(userId).setValue(walker);
+
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);
 
