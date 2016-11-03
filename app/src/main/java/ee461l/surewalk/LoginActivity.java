@@ -103,9 +103,6 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         hideDialog();
                         if(task.isSuccessful()){
-                           // Query queryRef = mDatabase.child("users").orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid());
-
-
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();

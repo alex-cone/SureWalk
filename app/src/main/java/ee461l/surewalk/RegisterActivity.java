@@ -17,8 +17,12 @@ package ee461l.surewalk;
         import com.google.firebase.auth.FirebaseAuth;
         import com.google.firebase.auth.FirebaseUser;
         import com.google.firebase.auth.UserProfileChangeRequest;
+        import com.google.firebase.database.DataSnapshot;
+        import com.google.firebase.database.DatabaseError;
         import com.google.firebase.database.DatabaseReference;
         import com.google.firebase.database.FirebaseDatabase;
+        import com.google.firebase.database.Query;
+        import com.google.firebase.database.ValueEventListener;
 
         import Users.Walker;
 
@@ -125,22 +129,20 @@ public class RegisterActivity extends AppCompatActivity {
                         hideDialog();
                         if(task.isSuccessful()){
                             Toast.makeText(getApplicationContext(), "User successfully registered.", Toast.LENGTH_LONG).show();
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            String userId = user.getUid();
-                            user.sendEmailVerification();
+                            setUpUser(username);
 
-                            Walker walker = new Walker();
-                            walker.setName(username);
-
-                            mDatabase.child("users").child(userId).setValue(walker);
-
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
-
+                            if(isUserAWalker(email)){
+                               /*TODO: Intent intent = new Intent(RegisterActivity.this, WalkerActivity.class);
+                                startActivity(intent);*/
+                                Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
+                            }
+                            else{
+                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
                             finish();
                         }
                         else{
-
                             Toast.makeText(getApplicationContext(), "User not registered.", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -151,9 +153,56 @@ public class RegisterActivity extends AppCompatActivity {
         if (!pDialog.isShowing())
             pDialog.show();
     }
-
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+    private boolean isUserAWalker(String email) {
+
+        mDatabase.child("Walkers")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String email = snapshot.getValue(String.class);
+                            Log.d("SureWalk", email);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+        return false;
+    }
+
+    private void setUpUser(String username){
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        String userId = user.getUid();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("SureWalk", "User profile updated.");
+                        }
+                    }
+                });
+
+
+        user.sendEmailVerification();
+
+        Walker walker = new Walker();
+        walker.setName(username);
+
+        mDatabase.child("users").child(userId).setValue(walker);
+        return;
+    }
+
+
+
 }
