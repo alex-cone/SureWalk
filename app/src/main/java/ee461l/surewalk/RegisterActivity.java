@@ -276,6 +276,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
+        return null;
     }
 
 }
