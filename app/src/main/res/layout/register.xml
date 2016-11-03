@@ -17,10 +17,13 @@
             android:paddingTop="5dip"
             android:paddingBottom="5dip">
             <!-- Logo Start-->
-            <ImageView android:src="@drawable/sure_walk_logo"
+            <ImageButton android:id="@+id/uploadProfilePicture"
+                android:src="@drawable/sure_walk_logo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"/>
+                android:layout_marginLeft="10dip"
+                android:background="#0000"/>
+
             <!-- Logo Ends -->
         </LinearLayout>
         <!--  Header Ends -->
@@ -63,6 +66,17 @@
                 android:textColor="#372c24"
                 android:text="Password"/>
             <EditText android:id="@+id/reg_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:password="true"
+                android:singleLine="true"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="20dip"/>
+            <TextView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#372c24"
+                android:text="Confirm Password"/>
+            <EditText android:id="@+id/confirm_password"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:password="true"
