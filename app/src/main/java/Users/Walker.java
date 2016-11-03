@@ -19,6 +19,9 @@ public class Walker extends SureWalkProfile implements Observer{
             if(requester.isRequesting()){
                 currentRequesters.add(requester);
             }
+            else{
+                currentRequesters.remove(requester);
+            }
         }
     }
 }
