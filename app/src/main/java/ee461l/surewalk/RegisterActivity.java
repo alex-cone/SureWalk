@@ -29,6 +29,10 @@ package ee461l.surewalk;
         import com.google.firebase.storage.FirebaseStorage;
         import com.google.firebase.storage.StorageReference;
         import com.google.firebase.storage.UploadTask;
+        import com.soundcloud.android.crop.Crop;
+
+        import java.io.File;
+
         import Users.Walker;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -96,10 +100,6 @@ public class RegisterActivity extends AppCompatActivity {
                 i.setType("image/*");
 
                 startActivityForResult(i, GALLERY_INTENT);
-
-
-
-
             }
         });
 
@@ -108,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
     /**
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
-     * */
+     */
     private void registerUser(final String username, final String email,
                               final String password) {
 
@@ -117,33 +117,29 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please Fillout Email", Toast.LENGTH_LONG).show();
             return;
 
-        }
-        else if (TextUtils.isEmpty(username)) {
+        } else if (TextUtils.isEmpty(username)) {
             Toast.makeText(getApplicationContext(), "Please Fillout Username", Toast.LENGTH_LONG).show();
             return;
-        }
-        else if (TextUtils.isEmpty(password)){
+        } else if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(), "Please Fillout a Password", Toast.LENGTH_LONG).show();
             return;
-        }
-        else
-         {
+        } else {
              /*Check to see if email is a @utexas.edu email*/
             boolean result = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches(); //First check if its a valid email in general
 
-            if(!result) {
+            if (!result) {
                 Toast.makeText(getApplicationContext(), "Not a valid Utexas email address", Toast.LENGTH_LONG).show();
                 return;
 
             }
             String emailWebsite = email.substring(email.indexOf('@'), email.length());
             //Check to see if it is a @utexas.edu email
-            if(!emailWebsite.equals("@utexas.edu")){
+            if (!emailWebsite.equals("@utexas.edu")) {
                 Toast.makeText(getApplicationContext(), "Not a valid Utexas email address", Toast.LENGTH_LONG).show();
                 return;
             }
 
-    }
+        }
         // Tag used to cancel the request
 
         pDialog.setMessage("Registering ...");
@@ -155,48 +151,44 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         hideDialog();
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "User successfully registered.", Toast.LENGTH_LONG).show();
                             setUpUser(username);
 
-                            if(isUserAWalker(email)){
+                            if (isUserAWalker(email)) {
                                /*TODO: Intent intent = new Intent(RegisterActivity.this, WalkerActivity.class);
                                 startActivity(intent);*/
                                 Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
-                            }
-                            else{
+                            } else {
                                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
                             finish();
-                        }
-                        else{
+                        } else {
                             Toast.makeText(getApplicationContext(), "User not registered.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK){
-            uri = data.getData();
-            profilePicture.setImageURI(uri);
-
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
+            beginCrop(result.getData());
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            handleCrop(resultCode, result);
+        }
     }
-    }
-
-
 
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
     }
+
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+
     private boolean isUserAWalker(String email) {
 
         mDatabase.child("Walkers")
@@ -208,6 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d("SureWalk", email);
                         }
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
@@ -216,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity {
         return false;
     }
 
-    private void setUpUser(String username){
+    private void setUpUser(String username) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         String userId = user.getUid();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -254,29 +247,17 @@ public class RegisterActivity extends AppCompatActivity {
         return;
     }
 
-    private Intent doCrop(Uri picUri) {
-        try {
+    private void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(this);
+    }
 
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-
-            cropIntent.setDataAndType(picUri, "image/*");
-            cropIntent.putExtra("crop", "true");
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            cropIntent.putExtra("outputX", 128);
-            cropIntent.putExtra("outputY", 128);
-            cropIntent.putExtra("return-data", true);
-            return cropIntent;
-
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            profilePicture.setImageURI(Crop.getOutput(result));
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
-        // respond to users whose devices do not support the crop action
-        catch (ActivityNotFoundException anfe) {
-            // display an error message
-            String errorMessage = "Whoops - your device doesn't support the crop action!";
-            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            toast.show();
-        }
-        return null;
     }
 
 }
