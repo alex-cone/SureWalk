@@ -1,8 +1,6 @@
 package ee461l.surewalk;
         import android.app.ProgressDialog;
-        import android.content.ActivityNotFoundException;
         import android.content.Intent;
-        import android.graphics.drawable.Drawable;
         import android.net.Uri;
         import android.os.Bundle;
         import android.support.annotation.NonNull;
@@ -78,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
-                registerUser(username, email, password);
+                checkIfValidUser(username, email, password);
             }
         });
 
@@ -109,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
      */
-    private void registerUser(final String username, final String email,
+    private void checkIfValidUser(final String username, final String email,
                               final String password) {
 
         /*Check to see if text fields are filled*/
@@ -123,7 +121,12 @@ public class RegisterActivity extends AppCompatActivity {
         } else if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(), "Please Fillout a Password", Toast.LENGTH_LONG).show();
             return;
-        } else {
+        }
+        else if(uri == null){
+            Toast.makeText(getApplicationContext(), "Please Submit a Photo of Yourself", Toast.LENGTH_LONG).show();
+            return;
+        }
+        else {
              /*Check to see if email is a @utexas.edu email*/
             boolean result = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches(); //First check if its a valid email in general
 
@@ -153,17 +156,7 @@ public class RegisterActivity extends AppCompatActivity {
                         hideDialog();
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "User successfully registered.", Toast.LENGTH_LONG).show();
-                            setUpUser(username);
-
-                            if (isUserAWalker(email)) {
-                               /*TODO: Intent intent = new Intent(RegisterActivity.this, WalkerActivity.class);
-                                startActivity(intent);*/
-                                Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
-                            } else {
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                            finish();
+                            registerUser(email, username);
                         } else {
                             Toast.makeText(getApplicationContext(), "User not registered.", Toast.LENGTH_LONG).show();
                         }
@@ -189,27 +182,46 @@ public class RegisterActivity extends AppCompatActivity {
             pDialog.dismiss();
     }
 
-    private boolean isUserAWalker(String email) {
-
+    private void registerUser(String email, String username) {
+        final String emailToRegister = email;
+        final String usernameToRegister = username;
         mDatabase.child("Walkers")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String email = snapshot.getValue(String.class);
-                            Log.d("SureWalk", email);
+                            String emailInDatabase = snapshot.getValue(String.class);
+                            Log.d("SureWalk", emailInDatabase);
+                            if(emailInDatabase.equals(emailToRegister)){
+                               /*TODO: Intent intent = new Intent(RegisterActivity.this, Walke rActivity.class);
+                                startActivity(intent);*/
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                String userId = user.getUid();
+                                Walker walker = new Walker();
+                                walker.setName(usernameToRegister);
+
+                                mDatabase.child("Walkers").child(snapshot.getKey().toString()).setValue(walker);
+                                Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
+                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class); //TODO: needs to go to Walker Screen
+                                startActivity(intent);
+                                finish();
+                            }
                         }
+
+                       /*User is not a Walker*/
+                        setUpRequester(usernameToRegister);
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
-
-        return false;
     }
 
-    private void setUpUser(String username) {
+    private void setUpRequester(String username) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         String userId = user.getUid();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -248,13 +260,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void beginCrop(Uri source) {
-        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "ProfilePicture"));
         Crop.of(source, destination).asSquare().start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {
         if (resultCode == RESULT_OK) {
-            profilePicture.setImageURI(Crop.getOutput(result));
+            uri = Crop.getOutput(result);
+            profilePicture.setImageURI(uri);
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
