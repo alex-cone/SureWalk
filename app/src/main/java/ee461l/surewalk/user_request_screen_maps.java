@@ -139,9 +139,9 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng uTexas = new LatLng(30, -97);
-        mMap.addMarker(new MarkerOptions().position(uTexas).title("University of TExas"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(uTexas));
+        //LatLng uTexas = new LatLng(30, -97);
+        //mMap.addMarker(new MarkerOptions().position(uTexas).title("University of TExas"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(uTexas));
     }
 
     //Location Services
@@ -176,9 +176,10 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
-                .title("I am here!");
+                .title("Current Location");
         mMap.addMarker(options);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
 
     @Override

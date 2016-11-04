@@ -39,7 +39,8 @@
         android:id="@+id/addressLine1"
         android:text="Address Line 1"
         android:maxLines="1"
-        android:inputType="text" />
+        android:inputType="text"
+        android:selectAllOnFocus="true" />
 
     <EditText
         android:layout_width="match_parent"
@@ -47,7 +48,8 @@
         android:id="@+id/addressLine2"
         android:text="Address Line 2"
         android:maxLines="1"
-        android:inputType="text" />
+        android:inputType="text"
+        android:selectAllOnFocus="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -66,7 +68,8 @@
         android:id="@+id/comments"
         android:layout_weight="0.20"
         android:text="Additional Information/Comments"
-        android:maxLines="3" />
+        android:maxLines="3"
+        android:selectAllOnFocus="true" />
 
     <Button
         android:layout_width="match_parent"
