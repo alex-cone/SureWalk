@@ -1,7 +1,14 @@
 package ee461l.surewalk;
 
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +16,11 @@ import android.text.InputType;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -16,9 +28,22 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class user_request_screen_maps extends FragmentActivity implements OnMapReadyCallback {
+public class user_request_screen_maps extends FragmentActivity implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener
+{
+
+    //Location Services
+    public static final String TAG = user_request_screen_maps.class.getSimpleName();
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private GoogleMap mMap;
+
+    //Location Services
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +54,17 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //Location Services
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+
         final EditText address1 = (EditText) findViewById(R.id.addressLine1);
         final EditText address2 = (EditText) findViewById(R.id.addressLine2);
         final EditText comments = (EditText) findViewById(R.id.comments);
@@ -37,28 +73,28 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
         //Button's original state is 1
         requestButton.setTag(1);
         requestButton.setOnClickListener(new View.OnClickListener() {
-             public void onClick (View v){
-                 int state = (Integer) requestButton.getTag();
-                 //Original state
-                 if (state == 1) {
-                     requestButton.setText("CANCEL");
-                     //Disable all text fields so you cant change while requesting
-                     disableText(address1);
-                     disableText(address2);
-                     disableText(comments);
-                     v.setTag(0);
-                 }
-                 //Else in the requesting state
-                 else {
-                     requestButton.setText("REQUEST WALKER");
-                     //Reenable all the text fields
-                     enableText(address1, false);
-                     enableText(address2, false);
-                     enableText(comments, true);
-                     v.setTag(1);
-                 }
-             }
-         });
+            public void onClick(View v) {
+                int state = (Integer) requestButton.getTag();
+                //Original state
+                if (state == 1) {
+                    requestButton.setText("CANCEL");
+                    //Disable all text fields so you cant change while requesting
+                    disableText(address1);
+                    disableText(address2);
+                    disableText(comments);
+                    v.setTag(0);
+                }
+                //Else in the requesting state
+                else {
+                    requestButton.setText("REQUEST WALKER");
+                    //Reenable all the text fields
+                    enableText(address1, false);
+                    enableText(address2, false);
+                    enableText(comments, true);
+                    v.setTag(1);
+                }
+            }
+        });
     }
 
     /*
@@ -79,10 +115,9 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
     @param  multi       True if multi line, False for others
      */
     public static void enableText(EditText textField, boolean multi) {
-        if(multi) {
+        if (multi) {
             textField.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        }
-        else {
+        } else {
             textField.setInputType(InputType.TYPE_CLASS_TEXT);
         }
         textField.setFocusable(true);
@@ -107,5 +142,83 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
         LatLng uTexas = new LatLng(30, -97);
         mMap.addMarker(new MarkerOptions().position(uTexas).title("University of TExas"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(uTexas));
+    }
+
+    //Location Services
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i(TAG, "Location services connected.");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        else {
+            handleNewLocation(location);
+        }
+    }
+
+    private void handleNewLocation(Location location) {
+        Log.d(TAG, location.toString());
+        double currentLatitude = location.getLatitude();
+        double currentLongitude = location.getLongitude();
+
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("I am here!");
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Location services suspended. Please reconnect.");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //setUpMapIfNeeded();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mMap.clear();
+        handleNewLocation(location);
     }
 }
