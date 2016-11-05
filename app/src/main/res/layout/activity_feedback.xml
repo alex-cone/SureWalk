@@ -40,5 +40,8 @@
         android:layout_marginTop="17dp"
         android:layout_below="@+id/textView"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="#CF5300"
+        android:textColor="#FFFFFF" />
+
 </RelativeLayout>

@@ -12,6 +12,9 @@ import android.widget.EditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FeedbackActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
@@ -30,8 +33,15 @@ public class FeedbackActivity extends AppCompatActivity {
             public void onClick(View view){
                 String feedbackMessage = feedback.getText().toString();
                 try {
-                    GMailSender sender = new GMailSender("utexassurewalk@gmail.com", "EE461LIsFun");
-                    sender.sendMail("User Feedback", feedbackMessage, "utexassurewalk@gmail.com","alex.e.cone@gmail.com");
+                    String fromEmail = "utexassurewalk@gmail.com";
+                    String fromPassword = "EE461LIsFun";
+                    String toEmails = "utexassurewalk@gmail.com";
+                    List<String> toEmailList;
+                    toEmailList = new ArrayList<String>();
+                    toEmailList.add(toEmails);
+                    String emailSubject = "User Feedback";
+                    String emailBody = feedbackMessage;
+                    new SendMailTask(FeedbackActivity.this).execute(fromEmail, fromPassword, toEmailList, emailSubject, emailBody);
                     Log.i("test","succeed");
                 } catch (Exception e) {
                     Log.i("test", "failed");
