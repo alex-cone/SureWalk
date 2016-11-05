@@ -190,8 +190,11 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String emailInDatabase = snapshot.getValue(String.class);
-                            Log.d("SureWalk", emailInDatabase);
+                            String emailInDatabase = "noValid";
+                            if(snapshot.getValue().getClass().equals(String.class)){
+                                emailInDatabase = snapshot.getValue(String.class);
+                            }
+                            Log.d("SureWalk", snapshot.getValue().getClass().toString());
                             if(emailInDatabase.equals(emailToRegister)){
                                /*TODO: Intent intent = new Intent(RegisterActivity.this, Walke rActivity.class);
                                 startActivity(intent);*/
