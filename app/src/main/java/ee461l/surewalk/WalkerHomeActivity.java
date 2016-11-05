@@ -7,7 +7,6 @@ package ee461l.surewalk;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,14 +14,13 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import Users.Walker;
-public class MainActivity extends Activity {
+public class WalkerHomeActivity extends Activity {
 
     private TextView txtName;
     private TextView txtEmail;
@@ -35,7 +33,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+            setContentView(R.layout.walker_home_screen);
 
             firebaseAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -56,7 +54,7 @@ public class MainActivity extends Activity {
             txtEmail = (TextView) findViewById(R.id.email);
             btnLogout = (Button) findViewById(R.id.btnLogout);
 
-            mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(
+            mDatabase.child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -96,7 +94,7 @@ public class MainActivity extends Activity {
         firebaseAuth.signOut();
 
         // Launching the login activity
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent intent = new Intent(WalkerHomeActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

@@ -19,8 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import Users.Walker;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -37,10 +39,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         firebaseAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         /*Checks to see if user is logged in*/
         if(firebaseAuth.getCurrentUser() != null){
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, WalkerHomeActivity.class);
             startActivity(intent);
             finish();
         }
@@ -103,9 +106,33 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         hideDialog();
                         if(task.isSuccessful()){
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            mDatabase.child("Walkers")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            String userId = firebaseAuth.getCurrentUser().getUid();
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                /*Check if snapshot is not a string, meaning a walker registered*/
+                                                if(!snapshot.getValue().getClass().equals(String.class)){
+                                                    if(userId.equals(snapshot.getKey())) {
+                                                        Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
+                                                        Intent intent = new Intent(LoginActivity.this, WalkerHomeActivity.class); //TODO: needs to go to Walker Screen
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                }
+                                            }
+
+                                   /*User is not a Walker*/
+                                            Intent intent = new Intent(LoginActivity.this, RequesterHomeScreen.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
                         }
                         else{
                             Toast.makeText(getApplicationContext(),
