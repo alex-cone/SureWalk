@@ -203,9 +203,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 Walker walker = new Walker();
                                 walker.setName(usernameToRegister);
 
-                                mDatabase.child("Walkers").child(snapshot.getKey().toString()).setValue(walker);
+                                /*Remove email from database and update with FirebaseID*/
+                                mDatabase.child("Walkers").child(snapshot.getKey().toString()).removeValue();
+                                mDatabase.child("Walkers").child(userId).setValue(walker);
                                 Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class); //TODO: needs to go to Walker Screen
+                                Intent intent = new Intent(RegisterActivity.this, WalkerHomeActivity.class); //TODO: needs to go to Walker Screen
                                 startActivity(intent);
                                 finish();
                             }
@@ -213,7 +215,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                        /*User is not a Walker*/
                         setUpRequester(usernameToRegister);
-                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        Intent intent = new Intent(RegisterActivity.this, RequesterHomeScreen.class);
                         startActivity(intent);
                         finish();
                     }
@@ -258,7 +260,7 @@ public class RegisterActivity extends AppCompatActivity {
         Walker walker = new Walker();
         walker.setName(username);
 
-        mDatabase.child("users").child(userId).setValue(walker);
+        mDatabase.child("Requesters").child(userId).setValue(walker);
         return;
     }
 
