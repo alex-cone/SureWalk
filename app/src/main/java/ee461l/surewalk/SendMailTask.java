@@ -35,9 +35,9 @@ public class SendMailTask extends AsyncTask {
                     args[4].toString());
             publishProgress("Preparing mail message....");
             androidEmail.createEmailMessage();
-            publishProgress("Sending email....");
+            publishProgress("Sending feedback....");
             androidEmail.sendEmail();
-            publishProgress("Email Sent.");
+            publishProgress("Feedback Sent.");
             Log.i("SendMailTask", "Mail Sent.");
         } catch (Exception e) {
             publishProgress(e.getMessage());
