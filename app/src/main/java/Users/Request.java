@@ -9,7 +9,13 @@ public class Request {
     String requesterID;
     String currentLocationRequest;
     String destinationRequest;
-    String status;
+    STATUS status;
+
+    public enum STATUS {
+        SUBMITTED,
+        ACCEPTED,
+        COMPLETED
+    }
 
     public void Request(){
         this.walkerID = null;
@@ -23,7 +29,7 @@ public class Request {
         this.requesterID = ri;
         this.currentLocationRequest = currLoc;
         this.destinationRequest = dest;
-        this.status = "submitted";
+        this.status = STATUS.SUBMITTED;
     }
 
     public String getWalkerID(){
@@ -42,7 +48,7 @@ public class Request {
         return this.destinationRequest;
     }
 
-    public String getStatus(){
+    public STATUS getStatus(){
         return this.status;
     }
 
