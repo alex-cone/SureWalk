@@ -8,7 +8,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
@@ -22,10 +21,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan">
-         <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".RegisterActivity"
@@ -40,13 +40,12 @@
             android:name=".FeedbackActivity"
             android:label="SureWalk"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan">
+   android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".RequesterHomeScreen"
             android:label="@string/app_name"
             android:launchMode="singleTop" />
-
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
     </application>
 

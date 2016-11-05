@@ -1,5 +1,4 @@
 package ee461l.surewalk;
-
 /**
  * Created by Diego on 10/30/2016.
  */
