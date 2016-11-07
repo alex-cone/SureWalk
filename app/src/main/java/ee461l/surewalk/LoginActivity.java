@@ -115,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class); //TODO: needs to go to Walker Screen
                                                         startActivity(intent);
                                                         finish();
+                                                        return;
                                                     }
                                                 }
                                             }

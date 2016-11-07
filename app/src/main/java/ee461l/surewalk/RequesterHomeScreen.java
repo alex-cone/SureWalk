@@ -36,7 +36,7 @@ public class RequesterHomeScreen extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_requester_home_screen);
+        setContentView(R.layout.requester_home_screen);
 
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();

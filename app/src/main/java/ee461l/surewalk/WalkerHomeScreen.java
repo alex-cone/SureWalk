@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -71,7 +72,24 @@ public class WalkerHomeScreen extends Activity {
                             // ...
                         }
                     });
+            mDatabase.child("Requests").addValueEventListener(
+                    new ValueEventListener(){
 
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Toast.makeText(getApplicationContext(),
+                                    "New Request", Toast.LENGTH_SHORT)
+                                    .show();
+
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
 
             // Displaying the user details on the screen
 
