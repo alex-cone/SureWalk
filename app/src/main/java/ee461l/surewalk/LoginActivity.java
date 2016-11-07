@@ -15,14 +15,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import Users.Walker;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -37,57 +34,56 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         /*Checks to see if user is logged in*/
         if(firebaseAuth.getCurrentUser() != null){
-            Intent intent = new Intent(LoginActivity.this, WalkerHomeActivity.class);
-            startActivity(intent);
-            finish();
+           chooseLoginScreen();
         }
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        registerScreen = (TextView) findViewById(R.id.link_to_register);
+        else {
+            setContentView(R.layout.login);
+            inputEmail = (EditText) findViewById(R.id.email);
+            inputPassword = (EditText) findViewById(R.id.password);
+            btnLogin = (Button) findViewById(R.id.btnLogin);
+            registerScreen = (TextView) findViewById(R.id.link_to_register);
 
-        // Progress dialog
-        pDialog = new ProgressDialog(this);
-        pDialog.setCancelable(false);
+            // Progress dialog
+            pDialog = new ProgressDialog(this);
+            pDialog.setCancelable(false);
 
-        // Login button Click Event
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+            // Login button Click Event
+            btnLogin.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View view) {
-                String email = inputEmail.getText().toString().trim();
-                String password = inputPassword.getText().toString().trim();
+                public void onClick(View view) {
+                    String email = inputEmail.getText().toString().trim();
+                    String password = inputPassword.getText().toString().trim();
 
-                // Check for empty data in the form
-                if (!email.isEmpty() && !password.isEmpty()) {
-                    // login user
-                    userLogin(email, password);
-                } else {
-                    // Prompt user to enter credentials
-                    Toast.makeText(getApplicationContext(),
-                            "Please enter your credentials!", Toast.LENGTH_SHORT)
-                            .show();
+                    // Check for empty data in the form
+                    if (!email.isEmpty() && !password.isEmpty()) {
+                        // login user
+                        userLogin(email, password);
+                    } else {
+                        // Prompt user to enter credentials
+                        Toast.makeText(getApplicationContext(),
+                                "Please enter your credentials!", Toast.LENGTH_SHORT)
+                                .show();
+                    }
                 }
-            }
 
-        });
-
+            });
 
 
-        // Listening to register new account link
-        registerScreen.setOnClickListener(new View.OnClickListener() {
+            // Listening to register new account link
+            registerScreen.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {
-                // Switching to Register screen
-                Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(i);
-            }
-        });
+                public void onClick(View v) {
+                    // Switching to Register screen
+                    Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
+                    startActivity(i);
+                }
+            });
+        }
 
     }
 
@@ -116,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 if(!snapshot.getValue().getClass().equals(String.class)){
                                                     if(userId.equals(snapshot.getKey())) {
                                                         Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
-                                                        Intent intent = new Intent(LoginActivity.this, WalkerHomeActivity.class); //TODO: needs to go to Walker Screen
+                                                        Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class); //TODO: needs to go to Walker Screen
                                                         startActivity(intent);
                                                         finish();
                                                     }
@@ -151,5 +147,32 @@ public class LoginActivity extends AppCompatActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void chooseLoginScreen() {
+        mDatabase.child("Walkers")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String userId = firebaseAuth.getCurrentUser().getUid();
+                            String registeredUID = snapshot.getKey();
+                            if(registeredUID.equals(userId)){
+                                Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                       /*If it goes through entire for loop, User is a Requester*/
+                        Intent intent = new Intent(LoginActivity.this, RequesterHomeScreen.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 }

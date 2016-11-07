@@ -20,7 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import Users.Walker;
-public class WalkerHomeActivity extends Activity {
+public class WalkerHomeScreen extends Activity {
 
     private TextView txtName;
     private TextView txtEmail;
@@ -54,13 +54,13 @@ public class WalkerHomeActivity extends Activity {
             txtEmail = (TextView) findViewById(R.id.email);
             btnLogout = (Button) findViewById(R.id.btnLogout);
 
-            mDatabase.child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
+            mDatabase.child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // Get user value
                             Walker walker = dataSnapshot.getValue(Walker.class);
-                            txtName.setText(walker.getName());
+                            txtName.setText(walker.username);
                             //user.email now has your email value
                         }
 
@@ -94,7 +94,7 @@ public class WalkerHomeActivity extends Activity {
         firebaseAuth.signOut();
 
         // Launching the login activity
-        Intent intent = new Intent(WalkerHomeActivity.this, LoginActivity.class);
+        Intent intent = new Intent(WalkerHomeScreen.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
