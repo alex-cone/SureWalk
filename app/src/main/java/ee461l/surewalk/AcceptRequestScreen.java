@@ -1,6 +1,7 @@
 package ee461l.surewalk;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import Users.Request;
@@ -31,6 +33,7 @@ public class AcceptRequestScreen extends Activity {
     private TextView txtName;
     private TextView txtPhoneNumber;
     private Button btnAcceptRequest;
+    private Button btnBackToRequests;
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
@@ -43,11 +46,13 @@ public class AcceptRequestScreen extends Activity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mStorage = FirebaseStorage.getInstance().getReference();
 
         profilePicture = (ImageView) findViewById(R.id.profile_picture);
         txtName = (TextView) findViewById(R.id.txtName);
         txtPhoneNumber = (TextView) findViewById(R.id.txtPhoneNumber);
         btnAcceptRequest = (Button) findViewById(R.id.btnAcceptRequest);
+        btnBackToRequests = (Button) findViewById(R.id.btnBackToRequests);
 
         mDatabase.child("Requests").addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -55,12 +60,15 @@ public class AcceptRequestScreen extends Activity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         requestKey =  dataSnapshot.getKey();
-                        Request request = dataSnapshot.getValue(Request.class);
+                        Request request = dataSnapshot.child("-KW41ivvtLISRW7vaoI_").getValue(Request.class);
+
                         Requester requester = request.getRequester();
                         txtName.setText(requester.username);
+                        txtPhoneNumber.setText(requester.phoneNumber);
+                        StorageReference profilePicutreRef = mStorage.child("userProfilePictures").child(requester.uid).child("ProfilePicture");
                         Glide.with(getApplicationContext())
                                 .using(new FirebaseImageLoader())
-                                .load(mStorage.child(requester.username))
+                                .load(profilePicutreRef)
                                 .into(profilePicture);
                     }
 
@@ -75,6 +83,14 @@ public class AcceptRequestScreen extends Activity {
         btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
+            }
+        });
+
+        btnBackToRequests.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(AcceptRequestScreen.this, WalkerHomeScreen.class);
+                startActivity(intent);
+                finish();
             }
         });
 

@@ -22,7 +22,9 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"/>
+            android:layout_marginLeft="10dip"
+            android:layout_marginBottom="30dip"
+            android:paddingTop="30dip"/>
         <!-- Logo Ends -->
     </LinearLayout>
     <!--  Header End
@@ -46,22 +48,23 @@
             android:layout_height="wrap_content"
             android:textColor="@color/login_screen_text"
             android:text="Name"
-            android:textSize="30dip"/>
+            android:textSize="30dip"
+            android:layout_marginBottom="30dip"/>
 
         <TextView android:id="@+id/txtPhoneNumber"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/login_screen_text"
             android:text="Number"
-            android:textSize="30dip"/>
+            android:textSize="30dip"
+            android:layout_marginBottom="30dip"/>
         <!--  Trip Label -->
-        <TextView android:layout_width="wrap_content"
+        <TextView android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/login_screen_text"
             android:text="Trip"
             android:textSize="30dip"
-            android:layout_marginBottom="20dip"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_marginBottom="30dip"/>
         <ImageView android:id="@+id/location"
             android:src="@drawable/sure_walk_logo"
             android:layout_gravity="center_horizontal"
@@ -70,13 +73,20 @@
             android:layout_marginLeft="10dip"
             android:layout_marginBottom="20dip"
             />
-        <!-- Login button -->
+        <!-- Accept button -->
         <Button android:id="@+id/btnAcceptRequest"
             android:background="@color/green_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dip"
             android:text="@string/accept"/>
+        <!-- Back button -->
+        <Button android:id="@+id/btnBackToRequests"
+            android:background="@color/input_register"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:text="@string/return_to_request"/>
     </LinearLayout>
     <!-- Login Form Ends -->
 
