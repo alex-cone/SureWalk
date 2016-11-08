@@ -31,6 +31,7 @@ package ee461l.surewalk;
 
         import java.io.File;
 
+        import Users.Requester;
         import Users.Walker;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -43,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText inputPhoneNumber;
     private ProgressDialog pDialog;
     private Uri uri;
 
@@ -62,9 +64,12 @@ public class RegisterActivity extends AppCompatActivity {
         inputFullName = (EditText) findViewById(R.id.reg_fullname);
         inputEmail = (EditText) findViewById(R.id.reg_email);
         inputPassword = (EditText) findViewById(R.id.reg_password);
+        inputPhoneNumber =  (EditText) findViewById(R.id.editTextId);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnLinkToLogin = (Button) findViewById(R.id.link_to_login);
         profilePicture = (ImageButton) findViewById(R.id.uploadProfilePicture);
+
+
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -76,7 +81,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
-                checkIfValidUser(username, email, password);
+                String phoneNumber = inputPhoneNumber.getText().toString().trim();
+                checkIfValidUser(username, email, password, phoneNumber);
             }
         });
 
@@ -108,7 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
      * email, password) to register url
      */
     private void checkIfValidUser(final String username, final String email,
-                              final String password) {
+                              final String password, final String phoneNumber) {
 
         /*Check to see if text fields are filled*/
         if (TextUtils.isEmpty(email)) {
@@ -119,14 +125,15 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please Fillout Username", Toast.LENGTH_LONG).show();
             return;
         } else if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "Please Fillout a Password", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Please Fillout Password", Toast.LENGTH_LONG).show();
             return;
-        }
-        else if(uri == null){
+        } else if (TextUtils.isEmpty(phoneNumber)) {
+            Toast.makeText(getApplicationContext(), "Please Fillout Phone Number", Toast.LENGTH_LONG).show();
+            return;
+        } else if (uri == null) {
             Toast.makeText(getApplicationContext(), "Please Submit a Photo of Yourself", Toast.LENGTH_LONG).show();
             return;
-        }
-        else {
+        } else {
              /*Check to see if email is a @utexas.edu email*/
             boolean result = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches(); //First check if its a valid email in general
 
@@ -148,7 +155,6 @@ public class RegisterActivity extends AppCompatActivity {
         pDialog.setMessage("Registering ...");
         showDialog();
         Log.d("SureWalk", username + " " + email + " " + password);
-
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -156,15 +162,16 @@ public class RegisterActivity extends AppCompatActivity {
                         hideDialog();
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "User successfully registered.", Toast.LENGTH_LONG).show();
-                            registerUser(email, username);
+                            registerUser(email, username, phoneNumber);
                         } else {
                             Toast.makeText(getApplicationContext(), "User not registered.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-    }
+        }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+
+        protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
             beginCrop(result.getData());
         } else if (requestCode == Crop.REQUEST_CROP) {
@@ -182,9 +189,7 @@ public class RegisterActivity extends AppCompatActivity {
             pDialog.dismiss();
     }
 
-    private void registerUser(String email, String username) {
-        final String emailToRegister = email;
-        final String usernameToRegister = username;
+    private void registerUser(final String emailToRegister, final String usernameToRegister, final String phoneNumberToRegister) {
         mDatabase.child("Walkers")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -196,25 +201,22 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             Log.d("SureWalk", snapshot.getValue().getClass().toString());
                             if(emailInDatabase.equals(emailToRegister)){
-                               /*TODO: Intent intent = new Intent(RegisterActivity.this, Walke rActivity.class);
-                                startActivity(intent);*/
-                                FirebaseUser user = firebaseAuth.getCurrentUser();
-                                String userId = user.getUid();
+                                String userId = firebaseAuth.getCurrentUser().getUid();
                                 Walker walker = new Walker();
-                                walker.setName(usernameToRegister);
+                                walker.setWalker(usernameToRegister,emailToRegister, phoneNumberToRegister, userId);
 
                                 /*Remove email from database and update with FirebaseID*/
                                 mDatabase.child("Walkers").child(snapshot.getKey().toString()).removeValue();
                                 mDatabase.child("Walkers").child(userId).setValue(walker);
                                 Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
-                                Intent intent = new Intent(RegisterActivity.this, WalkerHomeActivity.class); //TODO: needs to go to Walker Screen
+                                Intent intent = new Intent(RegisterActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
                                 finish();
                             }
                         }
 
-                       /*User is not a Walker*/
-                        setUpRequester(usernameToRegister);
+                       /*If it goes through entire for loop, User is a Requester*/
+                        setUpRequester(usernameToRegister, emailToRegister, phoneNumberToRegister);
                         Intent intent = new Intent(RegisterActivity.this, RequesterHomeScreen.class);
                         startActivity(intent);
                         finish();
@@ -226,7 +228,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void setUpRequester(String username) {
+    private void setUpRequester(String username, String email, String phoneNumber) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         String userId = user.getUid();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -249,7 +251,6 @@ public class RegisterActivity extends AppCompatActivity {
         photoFilePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getApplicationContext(), "Upload Done.", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -257,10 +258,11 @@ public class RegisterActivity extends AppCompatActivity {
         /*Send User Verfication Email*/
         user.sendEmailVerification();
 
-        Walker walker = new Walker();
-        walker.setName(username);
+        Requester requester = new Requester();
+        requester.setRequester(username, email, phoneNumber, userId);
+        Log.d("SureWalk", username + " " + email + " " + phoneNumber + " " + userId);
 
-        mDatabase.child("Requesters").child(userId).setValue(walker);
+        mDatabase.child("Requesters").child(userId).setValue(requester);
         return;
     }
 
