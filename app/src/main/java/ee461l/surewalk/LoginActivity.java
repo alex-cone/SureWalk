@@ -162,6 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
                                 finish();
+                                return;
                             }
                         }
 

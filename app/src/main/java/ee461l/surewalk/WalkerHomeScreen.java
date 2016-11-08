@@ -26,6 +26,7 @@ public class WalkerHomeScreen extends Activity {
     private TextView txtName;
     private TextView txtEmail;
     private Button btnLogout;
+    private Button btnViewRequests;
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
@@ -51,9 +52,10 @@ public class WalkerHomeScreen extends Activity {
             }
 
 
-            txtName = (TextView) findViewById(R.id.name);
-            txtEmail = (TextView) findViewById(R.id.email);
-            btnLogout = (Button) findViewById(R.id.btnLogout);
+        txtName = (TextView) findViewById(R.id.name);
+        txtEmail = (TextView) findViewById(R.id.email);
+        btnLogout = (Button) findViewById(R.id.btnLogout);
+        btnViewRequests = (Button) findViewById(R.id.btnViewRequest);
 
             mDatabase.child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
@@ -91,17 +93,23 @@ public class WalkerHomeScreen extends Activity {
                         }
                     });
 
-            // Displaying the user details on the screen
-
-
-            // Logout button click event
-            btnLogout.setOnClickListener(new View.OnClickListener() {
+        // Logout button click event
+        btnLogout.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     logoutUser();
                 }
             });
+        btnViewRequests.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WalkerHomeScreen.this, AcceptRequestScreen.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     /**
