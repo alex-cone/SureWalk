@@ -5,8 +5,8 @@ package Users;
  */
 
 public class Request {
-    String walkerID;
-    String requesterID;
+    Walker walker;
+    Requester requester;
     String currentLocationRequest;
     String destinationRequest;
     STATUS status;
@@ -18,26 +18,26 @@ public class Request {
     }
 
     public void Request(){
-        this.walkerID = null;
-        this.requesterID = null;
+        this.walker = null;
+        this.requester = null;
         this.currentLocationRequest = null;
         this.destinationRequest = null;
     }
 
-    public void setRequest(String wi, String ri, String currLoc, String dest){
-        this.walkerID = wi;
-        this.requesterID = ri;
+    public void setRequest(Walker walker, Requester requester, String currLoc, String dest){
+        this.walker = walker;
+        this.requester = requester;
         this.currentLocationRequest = currLoc;
         this.destinationRequest = dest;
         this.status = STATUS.SUBMITTED;
     }
 
-    public String getWalkerID(){
-        return this.walkerID;
+    public Walker getWalker(){
+        return this.walker;
     }
 
-    public String getRequesterID(){
-        return this.requesterID;
+    public Requester getRequester(){
+        return this.requester;
     }
 
     public String getCurrentLocationRequest(){

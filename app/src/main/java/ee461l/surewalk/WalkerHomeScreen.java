@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,11 +21,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import Users.Walker;
-public class WalkerHomeActivity extends Activity {
+public class WalkerHomeScreen extends Activity {
 
     private TextView txtName;
     private TextView txtEmail;
     private Button btnLogout;
+    private Button btnViewRequests;
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
@@ -50,17 +52,18 @@ public class WalkerHomeActivity extends Activity {
             }
 
 
-            txtName = (TextView) findViewById(R.id.name);
-            txtEmail = (TextView) findViewById(R.id.email);
-            btnLogout = (Button) findViewById(R.id.btnLogout);
+        txtName = (TextView) findViewById(R.id.name);
+        txtEmail = (TextView) findViewById(R.id.email);
+        btnLogout = (Button) findViewById(R.id.btnLogout);
+        btnViewRequests = (Button) findViewById(R.id.btnViewRequest);
 
-            mDatabase.child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
+            mDatabase.child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // Get user value
                             Walker walker = dataSnapshot.getValue(Walker.class);
-                            txtName.setText(walker.getName());
+                            txtName.setText(walker.username);
                             //user.email now has your email value
                         }
 
@@ -71,19 +74,42 @@ public class WalkerHomeActivity extends Activity {
                             // ...
                         }
                     });
+            mDatabase.child("Requests").addValueEventListener(
+                    new ValueEventListener(){
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Toast.makeText(getApplicationContext(),
+                                    "New Request", Toast.LENGTH_SHORT)
+                                    .show();
 
 
-            // Displaying the user details on the screen
 
+                        }
 
-            // Logout button click event
-            btnLogout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+        // Logout button click event
+        btnLogout.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     logoutUser();
                 }
             });
+        btnViewRequests.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WalkerHomeScreen.this, AcceptRequestScreen.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     /**
@@ -94,7 +120,7 @@ public class WalkerHomeActivity extends Activity {
         firebaseAuth.signOut();
 
         // Launching the login activity
-        Intent intent = new Intent(WalkerHomeActivity.this, LoginActivity.class);
+        Intent intent = new Intent(WalkerHomeScreen.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

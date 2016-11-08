@@ -32,7 +32,6 @@ package ee461l.surewalk;
         import java.io.File;
 
         import Users.Requester;
-        import Users.SureWalkProfile;
         import Users.Walker;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -45,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText confirmPassword;
     private EditText inputPhoneNumber;
     private ProgressDialog pDialog;
     private Uri uri;
@@ -65,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
         inputFullName = (EditText) findViewById(R.id.reg_fullname);
         inputEmail = (EditText) findViewById(R.id.reg_email);
         inputPassword = (EditText) findViewById(R.id.reg_password);
+        confirmPassword = (EditText) findViewById(R.id.confirm_password);
         inputPhoneNumber =  (EditText) findViewById(R.id.editTextId);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnLinkToLogin = (Button) findViewById(R.id.link_to_login);
@@ -83,7 +84,14 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
                 String phoneNumber = inputPhoneNumber.getText().toString().trim();
-                checkIfValidUser(username, email, password, phoneNumber);
+                String cPassword = confirmPassword.getText().toString().trim();
+
+                if(!cPassword.equals(password)){
+                    Toast.makeText(getApplicationContext(), "Passwords do not match  ", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    checkIfValidUser(username, email, password, phoneNumber);
+                }
             }
         });
 
@@ -203,15 +211,17 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d("SureWalk", snapshot.getValue().getClass().toString());
                             if(emailInDatabase.equals(emailToRegister)){
                                 String userId = firebaseAuth.getCurrentUser().getUid();
-                                Walker walker = new Walker(usernameToRegister,emailToRegister, phoneNumberToRegister);
+                                Walker walker = new Walker();
+                                walker.setWalker(usernameToRegister,emailToRegister, phoneNumberToRegister, userId);
 
                                 /*Remove email from database and update with FirebaseID*/
                                 mDatabase.child("Walkers").child(snapshot.getKey().toString()).removeValue();
                                 mDatabase.child("Walkers").child(userId).setValue(walker);
                                 Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
-                                Intent intent = new Intent(RegisterActivity.this, WalkerHomeActivity.class);
+                                Intent intent = new Intent(RegisterActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
                                 finish();
+                                return;
                             }
                         }
 
@@ -251,7 +261,6 @@ public class RegisterActivity extends AppCompatActivity {
         photoFilePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getApplicationContext(), "Upload Done.", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -259,7 +268,9 @@ public class RegisterActivity extends AppCompatActivity {
         /*Send User Verfication Email*/
         user.sendEmailVerification();
 
-        Requester requester = new Requester(username, email, phoneNumber);
+        Requester requester = new Requester();
+        requester.setRequester(username, email, phoneNumber, userId);
+        Log.d("SureWalk", username + " " + email + " " + phoneNumber + " " + userId);
 
         mDatabase.child("Requesters").child(userId).setValue(requester);
         return;
