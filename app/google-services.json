@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "874711305980",
+    "firebase_url": "https://surewalk-ad98e.firebaseio.com",
+    "project_id": "surewalk-ad98e",
+    "storage_bucket": "surewalk-ad98e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874711305980:android:627d0f2694ef4a00",
+        "android_client_info": {
+          "package_name": "ee461l.surewalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874711305980-gg4jd85cjovrb7duargglborap7mrbnb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6wza2o20tQFF6VS3MWbxyBsZRvtv4sz0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
