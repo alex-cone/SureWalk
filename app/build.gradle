@@ -34,6 +34,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:9.8.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
+    compile 'com.firebaseui:firebase-ui-storage:0.6.0'
     testCompile 'junit:junit:4.12'
     compile files('libs/activation.jar')
     compile files('libs/additionnal.jar')

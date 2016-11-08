@@ -29,7 +29,7 @@ public class Requester {
         DatabaseReference requestDatabase = mDatabase.child("Requests");
 
         Request newRequest = new Request();
-        newRequest.setRequest("noWalker", this.uid, currLoc, dest);
+        newRequest.setRequest(null, this, currLoc, dest);
 
         requestDatabase.push().setValue(newRequest);
         Log.d("SureWalk", "You sent a Request");
