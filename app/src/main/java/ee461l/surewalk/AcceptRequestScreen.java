@@ -1,11 +1,9 @@
 package ee461l.surewalk;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
 import Users.Request;
+import Users.Requester;
 import Users.Walker;
 
 /**
@@ -36,6 +35,7 @@ public class AcceptRequestScreen extends Activity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
     private StorageReference mStorage;
+    private String requestKey;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +54,13 @@ public class AcceptRequestScreen extends Activity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
+                        requestKey =  dataSnapshot.getKey();
                         Request request = dataSnapshot.getValue(Request.class);
-                        txtName.setText(request.getRequesterID());
+                        Requester requester = request.getRequester();
+                        txtName.setText(requester.username);
                         Glide.with(getApplicationContext())
                                 .using(new FirebaseImageLoader())
-                                .load(mStorage.child(request.getRequesterID()))
+                                .load(mStorage.child(requester.username))
                                 .into(profilePicture);
                     }
 
@@ -69,6 +71,12 @@ public class AcceptRequestScreen extends Activity {
                         // ...
                     }
                 });
+
+        btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+            }
+        });
 
     }
 }
