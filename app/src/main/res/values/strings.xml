@@ -11,9 +11,14 @@
     <string name="btn_link_to_login">Already registred? Login.</string>
     <string name="welcomeWalker">Welcome Walker</string>
 
+
+    <string name="view_request">VIEW REQUESTS</string>
     <!--String for content_requester_home_screen-->
     <string name="welcomeRequester">Welcome Requester</string>
     <string name="btn_logout">LOGOUT</string>
     <string name="btn_request">REQUEST</string>
     <string name="name">Fullname</string>
+
+    <string name="accept">ACCEPT REQUEST</string>
+    <string name="return_to_request">BACK TO REQUESTS</string>
 </resources>

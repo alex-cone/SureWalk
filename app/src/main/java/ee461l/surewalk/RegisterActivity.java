@@ -44,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText confirmPassword;
     private EditText inputPhoneNumber;
     private ProgressDialog pDialog;
     private Uri uri;
@@ -64,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
         inputFullName = (EditText) findViewById(R.id.reg_fullname);
         inputEmail = (EditText) findViewById(R.id.reg_email);
         inputPassword = (EditText) findViewById(R.id.reg_password);
+        confirmPassword = (EditText) findViewById(R.id.confirm_password);
         inputPhoneNumber =  (EditText) findViewById(R.id.editTextId);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnLinkToLogin = (Button) findViewById(R.id.link_to_login);
@@ -82,7 +84,14 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
                 String phoneNumber = inputPhoneNumber.getText().toString().trim();
-                checkIfValidUser(username, email, password, phoneNumber);
+                String cPassword = confirmPassword.getText().toString().trim();
+
+                if(!cPassword.equals(password)){
+                    Toast.makeText(getApplicationContext(), "Passwords do not match  ", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    checkIfValidUser(username, email, password, phoneNumber);
+                }
             }
         });
 
@@ -212,6 +221,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 Intent intent = new Intent(RegisterActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
                                 finish();
+                                return;
                             }
                         }
 
