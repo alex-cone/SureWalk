@@ -105,7 +105,7 @@ public class WalkerHomeScreen extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WalkerHomeScreen.this, AcceptRequestScreen.class);
+                Intent intent = new Intent(WalkerHomeScreen.this, WalkerViewRequests.class);
                 startActivity(intent);
                 finish();
             }

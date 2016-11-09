@@ -10,6 +10,7 @@ public class Request {
     String currentLocationRequest;
     String destinationRequest;
     STATUS status;
+    private int viewIndex;
 
     public enum STATUS {
         SUBMITTED,
@@ -22,6 +23,7 @@ public class Request {
         this.requester = null;
         this.currentLocationRequest = null;
         this.destinationRequest = null;
+        this.viewIndex = -1;
     }
 
     public void setRequest(Walker walker, Requester requester, String currLoc, String dest){
@@ -32,6 +34,12 @@ public class Request {
         this.status = STATUS.SUBMITTED;
     }
 
+    public void setID(int id){
+        this.viewIndex = id;
+    }
+    public int getID(){
+        return this.viewIndex;
+    }
     public Walker getWalker(){
         return this.walker;
     }
