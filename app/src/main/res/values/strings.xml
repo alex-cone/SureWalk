@@ -22,4 +22,9 @@
 
     <string name="accept">ACCEPT REQUEST</string>
     <string name="return_to_request">BACK TO REQUESTS</string>
+
+    <!--Strings for requester_currently_walking_screen-->
+    <string name="YourWalker">Your walker</string>
+    <string name="OnTheWay">is on the way!</string>
+    <string name="CANCEL">CANCEL REQUEST</string>
 </resources>
