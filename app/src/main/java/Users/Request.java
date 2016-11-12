@@ -52,6 +52,8 @@ public class Request {
         return this.status;
     }
 
+    public void setStatus(STATUS newStatus){ this.status = newStatus;}
+
 
 
 
