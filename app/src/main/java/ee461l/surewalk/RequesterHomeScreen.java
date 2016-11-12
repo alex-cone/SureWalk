@@ -94,12 +94,12 @@ public class RequesterHomeScreen extends Activity {
 
             @Override
             public void onClick(View v) {
-        /*        if(currentRequester != null) {
+                if(currentRequester != null) {
                     currentRequester.newRequest("currentLoc", "destination");
-                }*/
-                Intent intent = new Intent(RequesterHomeScreen.this, RequesterRequestScreen.class);
+                }
+                /*Intent intent = new Intent(RequesterHomeScreen.this, RequesterRequestScreen.class);
                 startActivity(intent);
-                finish();
+                finish();*/
             }
         });
     }
