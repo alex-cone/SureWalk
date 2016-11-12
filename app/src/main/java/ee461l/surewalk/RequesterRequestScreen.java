@@ -2,6 +2,8 @@ package ee461l.surewalk;
 
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,7 +26,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.vision.barcode.Barcode;
+
+import java.util.List;
+import java.util.Locale;
 
 public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -38,9 +45,12 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
     private GoogleMap mMap;
 
+
     //Location Services
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+
+    private Marker destinationMarker;
 
 
     @Override
@@ -81,6 +91,15 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     disableText(address2);
                     disableText(comments);
                     v.setTag(0);
+
+                    //Send the request
+
+                    //Attempt to display destination marker
+                    String address = address1.getText().toString() + " " + address2.getText().toString();
+                    Address destAddress = getLocationFromAddress(address);
+                    LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
+
                 }
                 //Else in the requesting state
                 else {
@@ -90,6 +109,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     enableText(address2, false);
                     enableText(comments, true);
                     v.setTag(1);
+
+                    //Cancel the request
+
+                    //Remove destination marker
+                    destinationMarker.remove();
                 }
             }
         });
@@ -219,5 +243,22 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     public void onLocationChanged(Location location) {
         mMap.clear();
         handleNewLocation(location);
+    }
+
+    public Address getLocationFromAddress(String destination) {
+        Geocoder coder = new Geocoder(this);
+        List<Address> addresses;
+        Address destinationLocation = new Address(Locale.US);
+        try {
+            addresses = coder.getFromLocationName(destination, 3);
+            if(addresses == null) {
+                return null;
+            }
+            destinationLocation = addresses.get(0);
+        }
+        catch(Exception e) {
+
+        }
+        return destinationLocation;
     }
 }
