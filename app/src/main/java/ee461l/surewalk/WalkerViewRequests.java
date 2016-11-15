@@ -103,7 +103,7 @@ public class WalkerViewRequests extends AppCompatActivity {
         this.requestLinearList.addView(tv);
         int index = this.requestLinearList.indexOfChild(tv);
         requestDatabaseKey.put(index, requestKey);
-        req.setID(index);
+        req.setIndex(index);
         final TextView tvv = tv;
         tv.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -119,11 +119,11 @@ public class WalkerViewRequests extends AppCompatActivity {
 
     public void updateList(Request req){
         //remove request from requestLinearList
-        int index = req.getID();
+        int index = req.getIndex();
         if(index != -1) {
             this.requestLinearList.removeViewAt(index);
             //requestDatabaseKey.remove(index);
-            req.setID(-1);
+            req.setIndex(-1);
         }
 
     }

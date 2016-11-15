@@ -11,11 +11,13 @@ public class Request {
     String destinationRequest;
     STATUS status;
     private int viewIndex;
+    private String firebaseId;
 
     public enum STATUS {
         SUBMITTED,
         ACCEPTED,
-        COMPLETED
+        COMPLETED,
+        CANCELED
     }
 
     public void Request(){
@@ -26,20 +28,23 @@ public class Request {
         this.viewIndex = -1;
     }
 
-    public void setRequest(Walker walker, Requester requester, String currLoc, String dest){
+    public void setRequest(Walker walker, Requester requester, String currLoc, String dest, String firebaseId){
         this.walker = walker;
         this.requester = requester;
         this.currentLocationRequest = currLoc;
         this.destinationRequest = dest;
         this.status = STATUS.SUBMITTED;
+        this.firebaseId = firebaseId;
     }
 
-    public void setID(int id){
+    public void setIndex(int id){
         this.viewIndex = id;
     }
-    public int getID(){
+    public int getIndex(){
         return this.viewIndex;
     }
+    public String getFirebaseId(){return this.firebaseId; }
+
     public Walker getWalker(){
         return this.walker;
     }
