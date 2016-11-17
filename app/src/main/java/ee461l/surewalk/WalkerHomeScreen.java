@@ -79,6 +79,7 @@ public class WalkerHomeScreen extends Activity {
 
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            //TODO: Make this give a notification to Walker
                             Toast.makeText(getApplicationContext(),
                                     "New Request", Toast.LENGTH_SHORT)
                                     .show();

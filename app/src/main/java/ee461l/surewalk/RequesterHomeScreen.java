@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import Users.Requester;
 
@@ -94,10 +95,8 @@ public class RequesterHomeScreen extends Activity {
 
             @Override
             public void onClick(View v) {
-        /*        if(currentRequester != null) {
-                    currentRequester.newRequest("currentLoc", "destination");
-                }*/
                 Intent intent = new Intent(RequesterHomeScreen.this, RequesterRequestScreen.class);
+                intent.putExtra("Requester", (new Gson()).toJson(currentRequester));
                 startActivity(intent);
                 finish();
             }
