@@ -15,8 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.text.InputType;
-import android.view.View;
-import android.view.View.OnClickListener;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,14 +33,14 @@ import com.google.android.gms.vision.barcode.Barcode;
 import java.util.List;
 import java.util.Locale;
 
-public class user_request_screen_maps extends FragmentActivity implements OnMapReadyCallback,
+public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener
 {
 
     //Location Services
-    public static final String TAG = user_request_screen_maps.class.getSimpleName();
+    public static final String TAG = RequesterRequestScreen.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private GoogleMap mMap;
@@ -58,7 +56,7 @@ public class user_request_screen_maps extends FragmentActivity implements OnMapR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_request_screen_maps);
+        setContentView(R.layout.requester_request_screen);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);

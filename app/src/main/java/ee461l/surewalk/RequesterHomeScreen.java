@@ -20,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import Users.Requester;
-import Users.Walker;
+
 public class RequesterHomeScreen extends Activity {
 
     private TextView txtName;
@@ -94,9 +94,12 @@ public class RequesterHomeScreen extends Activity {
 
             @Override
             public void onClick(View v) {
-                if(currentRequester != null) {
+        /*        if(currentRequester != null) {
                     currentRequester.newRequest("currentLoc", "destination");
-                }
+                }*/
+                Intent intent = new Intent(RequesterHomeScreen.this, RequesterRequestScreen.class);
+                startActivity(intent);
+                finish();
             }
         });
     }

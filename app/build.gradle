@@ -5,6 +5,7 @@ android {
     buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "ee461l.surewalk"
+        multiDexEnabled true
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1

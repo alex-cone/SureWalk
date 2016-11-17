@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1"
     android:padding="10dp">
 
-    <Space
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.75" />
+        android:layout_weight="0.77"
+        android:layout_height="122dp">
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            tools:context=".RequesterRequestScreen"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Address"
         android:id="@+id/titleAddress"
         android:layout_marginLeft="5dp"
@@ -27,7 +39,8 @@
         android:id="@+id/addressLine1"
         android:text="Address Line 1"
         android:maxLines="1"
-        android:inputType="text" />
+        android:inputType="text"
+        android:selectAllOnFocus="true" />
 
     <EditText
         android:layout_width="match_parent"
@@ -35,7 +48,8 @@
         android:id="@+id/addressLine2"
         android:text="Address Line 2"
         android:maxLines="1"
-        android:inputType="text" />
+        android:inputType="text"
+        android:selectAllOnFocus="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,12 +68,14 @@
         android:id="@+id/comments"
         android:layout_weight="0.20"
         android:text="Additional Information/Comments"
-        android:maxLines="3" />
+        android:maxLines="3"
+        android:selectAllOnFocus="true" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:text="REQUEST WALKER"
+        android:background="@color/green_btn"
         android:id="@+id/requestWalkerButton"
         android:layout_weight="0.04"
         android:layout_marginLeft="10dp"
