@@ -27,4 +27,5 @@
     <string name="YourWalker">Your walker</string>
     <string name="OnTheWay">is on the way!</string>
     <string name="CANCEL">CANCEL REQUEST</string>
+    <string name = "return_to_home">RETURN HOME</string>
 </resources>

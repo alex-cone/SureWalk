@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,7 +22,6 @@ import com.google.firebase.storage.StorageReference;
 
 import Users.Request;
 import Users.Requester;
-import Users.Walker;
 
 /**
  * Created by Diego on 11/7/2016.
@@ -43,7 +41,11 @@ public class AcceptRequestScreen extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.accept_request_screen);
+        setContentView(R.layout.walker_accept_request_screen);
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            requestKey = extras.getString("RequestID");
+        }
 
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -61,7 +63,7 @@ public class AcceptRequestScreen extends Activity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
 
-                        currentRequest = dataSnapshot.child("-KW41ivvtLISRW7vaoI_").getValue(Request.class);
+                        currentRequest = dataSnapshot.child(requestKey).getValue(Request.class);
 
                         Requester requester = currentRequest.getRequester();
                         txtName.setText(requester.username);
@@ -85,11 +87,11 @@ public class AcceptRequestScreen extends Activity {
             public void onClick(View view) {
                 if(currentRequest != null){
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
-                    mDatabase.child("Requests").child("-KW41ivvtLISRW7vaoI_").setValue(currentRequest);
+                    mDatabase.child("Requests").child(requestKey).setValue(currentRequest);
 
-                    /*Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
+                    Intent intent = new Intent(AcceptRequestScreen.this, WalkerViewRequests.class);
                     startActivity(intent);
-                    finish();*/
+                    finish();
                 }
 
 
@@ -98,7 +100,7 @@ public class AcceptRequestScreen extends Activity {
 
         btnBackToRequests.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(AcceptRequestScreen.this, WalkerHomeScreen.class);
+                Intent intent = new Intent(AcceptRequestScreen.this, WalkerViewRequests.class);
                 startActivity(intent);
                 finish();
             }

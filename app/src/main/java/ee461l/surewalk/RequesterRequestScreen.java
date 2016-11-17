@@ -29,9 +29,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.Locale;
+
+import Users.Request;
+import Users.Requester;
 
 public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -52,6 +56,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
     private Marker destinationMarker;
 
+    private Requester currentRequester;
+    private Request currentRequest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +68,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            currentRequester =  new Gson().fromJson(extras.getString("Requester"), Requester.class);
+
+        }
 
         //Location Services
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -93,12 +105,14 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     v.setTag(0);
 
                     //Send the request
-
-                    //Attempt to display destination marker
-                    String address = address1.getText().toString() + " " + address2.getText().toString();
+                    if(currentRequester != null) {
+                        currentRequest = currentRequester.newRequest("currentLoc", "destination");
+                    }
+                    //TODO FIX: Attempt to display destination marker
+                    /*String address = address1.getText().toString() + " " + address2.getText().toString();
                     Address destAddress = getLocationFromAddress(address);
                     LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
-                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
+                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));*/
 
                 }
                 //Else in the requesting state
@@ -111,9 +125,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     v.setTag(1);
 
                     //Cancel the request
+                      //currentRequester.cancelRequest(currentRequest);
 
-                    //Remove destination marker
-                    destinationMarker.remove();
+                    //TODO FIX: Remove destination marker
+                    //destinationMarker.remove();
                 }
             }
         });
