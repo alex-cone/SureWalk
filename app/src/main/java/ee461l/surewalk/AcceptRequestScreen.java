@@ -39,6 +39,7 @@ public class AcceptRequestScreen extends Activity {
     private DatabaseReference mDatabase;
     private StorageReference mStorage;
     private String requestKey;
+    private Request currentRequest;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +60,10 @@ public class AcceptRequestScreen extends Activity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
-                        requestKey =  dataSnapshot.getKey();
-                        Request request = dataSnapshot.child("-KW41ivvtLISRW7vaoI_").getValue(Request.class);
 
-                        Requester requester = request.getRequester();
+                        currentRequest = dataSnapshot.child("-KW41ivvtLISRW7vaoI_").getValue(Request.class);
+
+                        Requester requester = currentRequest.getRequester();
                         txtName.setText(requester.username);
                         txtPhoneNumber.setText(requester.phoneNumber);
                         StorageReference profilePicutreRef = mStorage.child("userProfilePictures").child(requester.uid).child("ProfilePicture");
@@ -82,6 +83,15 @@ public class AcceptRequestScreen extends Activity {
 
         btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if(currentRequest != null){
+                    currentRequest.setStatus(Request.STATUS.ACCEPTED);
+                    mDatabase.child("Requests").child("-KW41ivvtLISRW7vaoI_").setValue(currentRequest);
+
+                    /*Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
+                    startActivity(intent);
+                    finish();*/
+                }
+
 
             }
         });
