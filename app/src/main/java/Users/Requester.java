@@ -1,7 +1,10 @@
 package Users;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +29,7 @@ public class Requester {
         this.uid = uid;
     }
 
-    public Request newRequest(String currLoc, String dest) {
+    public Request newRequest(LatLng currLoc, LatLng dest) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference requestDatabase = mDatabase.child("Requests");
         DatabaseReference mypostref = requestDatabase.push();

@@ -59,6 +59,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private Requester currentRequester;
     private Request currentRequest;
 
+    //The current and destination location data. To send to requester object to make a request
+    private LatLng currentLocData;
+    private LatLng destinationLocData;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,15 +108,19 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     disableText(comments);
                     v.setTag(0);
 
-                    //Send the request
-                    if(currentRequester != null) {
-                        currentRequest = currentRequester.newRequest("currentLoc", "destination");
-                    }
                     //TODO FIX: Attempt to display destination marker
-                    /*String address = address1.getText().toString() + " " + address2.getText().toString();
+                    String address = address1.getText().toString() + " " + address2.getText().toString();
                     Address destAddress = getLocationFromAddress(address);
                     LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
-                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));*/
+                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
+
+                    destinationLocData = destLatLng; // set destination location data to the destination information
+
+                    //Send the request
+                    if(currentRequester != null) {
+                        currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
+                    }
+
 
                 }
                 //Else in the requesting state
@@ -210,6 +218,8 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         double currentLongitude = location.getLongitude();
 
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+        currentLocData = latLng; // Set the current location data to the current location
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
