@@ -5,8 +5,12 @@ package ee461l.surewalk;
  */
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.RemoteMessage;
+
 import Users.Walker;
 public class WalkerHomeScreen extends Activity {
 
@@ -53,7 +59,8 @@ public class WalkerHomeScreen extends Activity {
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnViewRequests = (Button) findViewById(R.id.btnViewRequest);
 
-            FirebaseVariables.getDatabaseReference().child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
+
+        FirebaseVariables.getDatabaseReference().child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -77,6 +84,22 @@ public class WalkerHomeScreen extends Activity {
                         Toast.makeText(getApplicationContext(),
                                 "New Request", Toast.LENGTH_SHORT)
                                 .show();
+
+                        Intent intent = new Intent();
+                        PendingIntent pIntent = PendingIntent.getActivity(WalkerHomeScreen.this,0,intent,0);
+                        Notification notification = new Notification.Builder(WalkerHomeScreen.this)
+                                .setTicker("TickerTitle")
+                                .setContentTitle("SureWalk")
+                                .setContentText("New Request")
+                                .setSmallIcon(R.drawable.sure_walk_logo)
+                                .setContentIntent(pIntent).getNotification();
+
+                        notification.flags = Notification.FLAG_AUTO_CANCEL;
+                        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                        nm.notify(0,notification);
+
+
+
                     }
 
                     @Override
@@ -100,7 +123,7 @@ public class WalkerHomeScreen extends Activity {
                     }
                 }
         );
-        
+
 
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener() {
