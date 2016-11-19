@@ -13,8 +13,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 
-import android.telephony.SmsManager;
-
 public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     private ImageView profilePicture;
     private TextView txtName;
@@ -31,10 +29,10 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.requester_currently_walking_screen);
-        profilePicture = (ImageView) findViewById(R.id.ProfilePicture);
+        profilePicture = (ImageView) findViewById(R.id.RequesterPicture);
         txtName = (TextView) findViewById(R.id.WalkerName);
-        btnCallWalker = (Button) findViewById(R.id.CallWalker);
-        btnMessageWalker = (Button) findViewById(R.id.TextWalker);
+        btnCallWalker = (Button) findViewById(R.id.CallRequester);
+        btnMessageWalker = (Button) findViewById(R.id.TextRequeseter);
         btnCancelRequest = (Button) findViewById(R.id.CancelRequest);
         txtName.setText("Alex is on the way!");
         walkerPhoneNumber = "832-931-0841";
