@@ -13,6 +13,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import ee461l.surewalk.FirebaseVariables;
+
 /**
  * Created by Diego on 10/15/2016.
  */
@@ -30,8 +33,7 @@ public class Requester {
     }
 
     public Request newRequest(LatLng currLoc, LatLng dest) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference requestDatabase = mDatabase.child("Requests");
+        DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
         DatabaseReference mypostref = requestDatabase.push();
 
         Request newRequest = new Request();
@@ -39,13 +41,27 @@ public class Requester {
 
         mypostref.setValue(newRequest);
 
+        mypostref.addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
+
         Log.d("SureWalk", "You sent a Request");
         return newRequest;
     }
 
     public void cancelRequest(Request request) {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        final DatabaseReference requestDatabase = mDatabase.child("Requests").child(request.getFirebaseId());
+        final DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests").child(request.getFirebaseId());
         request.setStatus(Request.STATUS.CANCELED);
         requestDatabase.setValue(request);
 

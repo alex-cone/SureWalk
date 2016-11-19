@@ -16,15 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FeedbackActivity extends AppCompatActivity {
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
     private EditText feedback;
     private Button btnSubmit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-        firebaseAuth = FirebaseAuth.getInstance();
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         feedback = (EditText) findViewById(R.id.feedback);
         Log.i("test", "test");

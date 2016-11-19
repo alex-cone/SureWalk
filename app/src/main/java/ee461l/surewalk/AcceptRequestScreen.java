@@ -33,9 +33,6 @@ public class AcceptRequestScreen extends Activity {
     private Button btnAcceptRequest;
     private Button btnBackToRequests;
 
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorage;
     private String requestKey;
     private Request currentRequest;
 
@@ -47,9 +44,6 @@ public class AcceptRequestScreen extends Activity {
             requestKey = extras.getString("RequestID");
         }
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mStorage = FirebaseStorage.getInstance().getReference();
 
         profilePicture = (ImageView) findViewById(R.id.profile_picture);
         txtName = (TextView) findViewById(R.id.txtName);
@@ -57,7 +51,7 @@ public class AcceptRequestScreen extends Activity {
         btnAcceptRequest = (Button) findViewById(R.id.btnAcceptRequest);
         btnBackToRequests = (Button) findViewById(R.id.btnBackToRequests);
 
-        mDatabase.child("Requests").addListenerForSingleValueEvent(
+        FirebaseVariables.getDatabaseReference().child("Requests").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -68,7 +62,7 @@ public class AcceptRequestScreen extends Activity {
                         Requester requester = currentRequest.getRequester();
                         txtName.setText(requester.username);
                         txtPhoneNumber.setText(requester.phoneNumber);
-                        StorageReference profilePicutreRef = mStorage.child("userProfilePictures").child(requester.uid).child("ProfilePicture");
+                        StorageReference profilePicutreRef = FirebaseVariables.getStorageReference().child("userProfilePictures").child(requester.uid).child("ProfilePicture");
                         Glide.with(getApplicationContext())
                                 .using(new FirebaseImageLoader())
                                 .load(profilePicutreRef)
@@ -87,7 +81,7 @@ public class AcceptRequestScreen extends Activity {
             public void onClick(View view) {
                 if(currentRequest != null){
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
-                    mDatabase.child("Requests").child(requestKey).setValue(currentRequest);
+                    FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
 
                     Intent intent = new Intent(AcceptRequestScreen.this, WalkerViewRequests.class);
                     startActivity(intent);

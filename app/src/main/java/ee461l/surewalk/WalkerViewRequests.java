@@ -26,9 +26,6 @@ import Users.Requester;
 import Users.Walker;
 
 public class WalkerViewRequests extends AppCompatActivity {
-
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
     private LinearLayout requestLinearList;
     private LinearLayout.LayoutParams lparams;
     private String requestKey;
@@ -40,9 +37,6 @@ public class WalkerViewRequests extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.walker_view_requests);
         requestDatabaseKey = new HashMap<>();
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         requestLinearList = (LinearLayout) findViewById(R.id.requestLinearLayout);
         lparams = new LinearLayout.LayoutParams(
@@ -57,7 +51,7 @@ public class WalkerViewRequests extends AppCompatActivity {
             }
         });
 
-        mDatabase.child("Requests").addValueEventListener(
+        FirebaseVariables.getDatabaseReference().child("Requests").addValueEventListener(
                 new ValueEventListener(){
 
                     @Override

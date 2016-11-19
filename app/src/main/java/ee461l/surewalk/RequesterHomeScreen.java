@@ -29,9 +29,6 @@ public class RequesterHomeScreen extends Activity {
     private Button btnLogout;
     private Button btnRequest;
 
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private Requester currentRequester;
 
     @Override
@@ -39,9 +36,7 @@ public class RequesterHomeScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.requester_home_screen);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser user = FirebaseVariables.getFireBaseAuth().getCurrentUser();
         if(user == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -59,7 +54,7 @@ public class RequesterHomeScreen extends Activity {
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnRequest = (Button) findViewById(R.id.btnRequest);
 
-        mDatabase.child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
+        FirebaseVariables.getDatabaseReference().child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -108,7 +103,7 @@ public class RequesterHomeScreen extends Activity {
      * preferences Clears the user data from sqlite users table
      * */
     private void logoutUser() {
-        firebaseAuth.signOut();
+        FirebaseVariables.getFireBaseAuth().signOut();
 
         // Launching the login activity
         Intent intent = new Intent(RequesterHomeScreen.this, LoginActivity.class);
