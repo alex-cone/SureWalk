@@ -111,16 +111,17 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     //TODO FIX: Attempt to display destination marker
                     String address = address1.getText().toString() + " " + address2.getText().toString();
                     Address destAddress = getLocationFromAddress(address);
-                    LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
-                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
+                    //Geocoder can not find the location specified
+                    if(destAddress != null) {
+                        LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                        destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
+                        destinationLocData = destLatLng; // set destination location data to the destination information
 
-                    destinationLocData = destLatLng; // set destination location data to the destination information
-
-                    //Send the request
-                    if(currentRequester != null) {
-                        currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
+                        //Send the request
+                        if(currentRequester != null) {
+                            currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
+                        }
                     }
-
 
                 }
                 //Else in the requesting state
@@ -282,7 +283,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
             destinationLocation = addresses.get(0);
         }
         catch(Exception e) {
-
+            return null;
         }
         return destinationLocation;
     }
