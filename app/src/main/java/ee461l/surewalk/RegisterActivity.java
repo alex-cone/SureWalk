@@ -49,18 +49,11 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
     private Uri uri;
 
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorage;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
-        firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mStorage = FirebaseStorage.getInstance().getReference();
 
         inputFullName = (EditText) findViewById(R.id.reg_fullname);
         inputEmail = (EditText) findViewById(R.id.reg_email);
@@ -164,7 +157,7 @@ public class RegisterActivity extends AppCompatActivity {
         pDialog.setMessage("Registering ...");
         showDialog();
         Log.d("SureWalk", username + " " + email + " " + password);
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        FirebaseVariables.getFireBaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -199,7 +192,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser(final String emailToRegister, final String usernameToRegister, final String phoneNumberToRegister) {
-        mDatabase.child("Walkers")
+        FirebaseVariables.getDatabaseReference().child("Walkers")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -210,13 +203,13 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             Log.d("SureWalk", snapshot.getValue().getClass().toString());
                             if(emailInDatabase.equals(emailToRegister)){
-                                String userId = firebaseAuth.getCurrentUser().getUid();
+                                String userId =  FirebaseVariables.getFireBaseAuth().getCurrentUser().getUid();
                                 Walker walker = new Walker();
                                 walker.setWalker(usernameToRegister,emailToRegister, phoneNumberToRegister, userId);
 
                                 /*Remove email from database and update with FirebaseID*/
-                                mDatabase.child("Walkers").child(snapshot.getKey().toString()).removeValue();
-                                mDatabase.child("Walkers").child(userId).setValue(walker);
+                                FirebaseVariables.getDatabaseReference().child("Walkers").child(snapshot.getKey().toString()).removeValue();
+                                FirebaseVariables.getDatabaseReference().child("Walkers").child(userId).setValue(walker);
                                 Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
                                 Intent intent = new Intent(RegisterActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
@@ -239,7 +232,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setUpRequester(String username, String email, String phoneNumber) {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser user =  FirebaseVariables.getFireBaseAuth().getCurrentUser();
         String userId = user.getUid();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(username)
@@ -255,7 +248,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
-        StorageReference photoFilePath = mStorage.child("userProfilePictures").child(user.getUid()).child(uri.getLastPathSegment());
+        StorageReference photoFilePath = FirebaseVariables.getStorageReference().child("userProfilePictures").child(user.getUid()).child(uri.getLastPathSegment());
 
          /*Add user Photo to database*/
         photoFilePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -272,7 +265,7 @@ public class RegisterActivity extends AppCompatActivity {
         requester.setRequester(username, email, phoneNumber, userId);
         Log.d("SureWalk", username + " " + email + " " + phoneNumber + " " + userId);
 
-        mDatabase.child("Requesters").child(userId).setValue(requester);
+        FirebaseVariables.getDatabaseReference().child("Requesters").child(userId).setValue(requester);
         return;
     }
 

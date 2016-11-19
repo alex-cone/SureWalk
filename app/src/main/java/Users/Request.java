@@ -1,5 +1,7 @@
 package Users;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Sharmistha on 11/5/2016.
  */
@@ -7,8 +9,8 @@ package Users;
 public class Request {
     Walker walker;
     Requester requester;
-    String currentLocationRequest;
-    String destinationRequest;
+    LatLng currentLocationRequest;
+    LatLng destinationRequest;
     STATUS status;
     private int viewIndex;
     private String firebaseId;
@@ -28,7 +30,7 @@ public class Request {
         this.viewIndex = -1;
     }
 
-    public void setRequest(Walker walker, Requester requester, String currLoc, String dest, String firebaseId){
+    public void setRequest(Walker walker, Requester requester, LatLng currLoc, LatLng dest, String firebaseId){
         this.walker = walker;
         this.requester = requester;
         this.currentLocationRequest = currLoc;
@@ -53,11 +55,11 @@ public class Request {
         return this.requester;
     }
 
-    public String getCurrentLocationRequest(){
+    public LatLng getCurrentLocationRequest(){
         return this.currentLocationRequest;
     }
 
-    public String getDestinationRequest(){
+    public LatLng getDestinationRequest(){
         return this.destinationRequest;
     }
 

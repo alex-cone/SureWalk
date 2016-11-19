@@ -28,17 +28,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputEmail;
     private EditText inputPassword;
     private ProgressDialog pDialog;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         /*Checks to see if user is logged in*/
-        if(firebaseAuth.getCurrentUser() != null){
+        if(FirebaseVariables.getFireBaseAuth().getCurrentUser() != null){
            chooseLoginScreen();
         }
         else {
@@ -96,17 +92,17 @@ public class LoginActivity extends AppCompatActivity {
 
         pDialog.setMessage("Logging in ...");
         showDialog();
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        FirebaseVariables.getFireBaseAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         hideDialog();
                         if(task.isSuccessful()){
-                            mDatabase.child("Walkers")
+                            FirebaseVariables.getDatabaseReference().child("Walkers")
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
-                                            String userId = firebaseAuth.getCurrentUser().getUid();
+                                            String userId = FirebaseVariables.getFireBaseAuth().getCurrentUser().getUid();
                                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                                 /*Check if snapshot is not a string, meaning a walker registered*/
                                                 if(!snapshot.getValue().getClass().equals(String.class)){
@@ -151,12 +147,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void chooseLoginScreen() {
-        mDatabase.child("Walkers")
+        FirebaseVariables.getDatabaseReference().child("Walkers")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String userId = firebaseAuth.getCurrentUser().getUid();
+                            String userId = FirebaseVariables.getFireBaseAuth().getCurrentUser().getUid();
                             String registeredUID = snapshot.getKey();
                             if(registeredUID.equals(userId)){
                                 Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class);

@@ -28,18 +28,13 @@ public class WalkerHomeScreen extends Activity {
     private Button btnLogout;
     private Button btnViewRequests;
 
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.walker_home_screen);
 
-            firebaseAuth = FirebaseAuth.getInstance();
-            mDatabase = FirebaseDatabase.getInstance().getReference();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser user = FirebaseVariables.getFireBaseAuth().getCurrentUser();
         if(user == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -57,7 +52,7 @@ public class WalkerHomeScreen extends Activity {
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnViewRequests = (Button) findViewById(R.id.btnViewRequest);
 
-            mDatabase.child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
+            FirebaseVariables.getDatabaseReference().child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -74,7 +69,7 @@ public class WalkerHomeScreen extends Activity {
                             // ...
                         }
                     });
-            mDatabase.child("Requests").addValueEventListener(
+        FirebaseVariables.getDatabaseReference().child("Requests").addValueEventListener(
                     new ValueEventListener(){
 
                         @Override
@@ -118,7 +113,7 @@ public class WalkerHomeScreen extends Activity {
      * preferences Clears the user data from sqlite users table
      * */
     private void logoutUser() {
-        firebaseAuth.signOut();
+        FirebaseVariables.getFireBaseAuth().signOut();
 
         // Launching the login activity
         Intent intent = new Intent(WalkerHomeScreen.this, LoginActivity.class);
