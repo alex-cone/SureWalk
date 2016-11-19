@@ -2,7 +2,9 @@ package Users;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
@@ -32,9 +34,9 @@ public class Requester {
         this.uid = uid;
     }
 
-    public Request newRequest(LatLng currLoc, LatLng dest) {
+    public Request newRequest(LatLng currLoc, LatLng dest, final Activity act) {
         DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
-        DatabaseReference mypostref = requestDatabase.push();
+        final DatabaseReference mypostref = requestDatabase.push();
 
         Request newRequest = new Request();
         newRequest.setRequest(null, this, currLoc, dest, mypostref.getKey());
@@ -45,7 +47,19 @@ public class Requester {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        Toast.makeText(act.getApplicationContext(),
+                                "Something was changed 0_o", Toast.LENGTH_SHORT)
+                                .show();
+                        Request currentRequest = dataSnapshot.getValue(Request.class);
+                        if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
 
+                        }
+                        else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
+
+                        }
+                        else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
+
+                        }
                     }
 
                     @Override

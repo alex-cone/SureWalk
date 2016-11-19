@@ -1,5 +1,6 @@
 package ee461l.surewalk;
 
+import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -118,7 +119,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
                     //Send the request
                     if(currentRequester != null) {
-                        currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
+                        currentRequest = currentRequester.newRequest(currentLocData, destinationLocData, RequesterRequestScreen.this);
                     }
 
 
