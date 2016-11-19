@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -69,25 +70,37 @@ public class WalkerHomeScreen extends Activity {
                             // ...
                         }
                     });
-        FirebaseVariables.getDatabaseReference().child("Requests").addValueEventListener(
-                    new ValueEventListener(){
+        FirebaseVariables.getDatabaseReference().child("Requests").addChildEventListener(
+                new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Toast.makeText(getApplicationContext(),
+                                "New Request", Toast.LENGTH_SHORT)
+                                .show();
+                    }
 
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            //TODO: Make this give a notification to Walker
-                            Toast.makeText(getApplicationContext(),
-                                    "New Request", Toast.LENGTH_SHORT)
-                                    .show();
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
+                    }
 
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                        }
-                    });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+        );
+        
 
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener() {
