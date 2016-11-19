@@ -20,7 +20,7 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     private Button btnMessageWalker;
     private Button btnCancelRequest;
     private String walkerPhoneNumber;
-
+    private Users.Request currentRequest;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabase;
     private StorageReference mStorage;
@@ -34,34 +34,10 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
         btnCallWalker = (Button) findViewById(R.id.CallRequester);
         btnMessageWalker = (Button) findViewById(R.id.TextRequeseter);
         btnCancelRequest = (Button) findViewById(R.id.CancelRequest);
+
         txtName.setText("Alex is on the way!");
         walkerPhoneNumber = "832-931-0841";
-        /*
-        mDatabase.child("Requests").addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        requestKey =  dataSnapshot.getKey();
-                        Request request = dataSnapshot.child("-KW41ivvtLISRW7vaoI_").getValue(Request.class);
 
-                        Requester requester = request.getRequester();
-                        txtName.setText(requester.username);
-                        walkerPhoneNumber = requester.phoneNumber;
-                        StorageReference profilePicutreRef = mStorage.child("userProfilePictures").child(requester.uid).child("ProfilePicture");
-                        Glide.with(getApplicationContext())
-                                .using(new FirebaseImageLoader())
-                                .load(profilePicutreRef)
-                                .into(profilePicture);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                        // ...
-                    }
-        });*/
 
         btnCallWalker.setOnClickListener(new View.OnClickListener() {
             @Override
