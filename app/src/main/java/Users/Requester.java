@@ -37,12 +37,14 @@ public class Requester {
         this.uid = uid;
     }
 
-    public Request newRequest(LatLng currLoc, LatLng dest, final Activity act) {
+
+    public Request newRequest(/*LatLng currLoc, LatLng dest*/ double currLocLat, double currLocLong,
+                              double destinationLocLat, double destinationLocLong) {
         DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
         final DatabaseReference mypostref = requestDatabase.push();
 
         Request newRequest = new Request();
-        newRequest.setRequest(null, this, currLoc, dest, mypostref.getKey());
+        newRequest.setRequest(null, this, currLocLat, currLocLong, destinationLocLat, destinationLocLong, mypostref.getKey());
 
         mypostref.setValue(newRequest);
         /*
