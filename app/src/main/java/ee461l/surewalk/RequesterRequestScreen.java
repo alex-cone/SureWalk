@@ -124,10 +124,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
                         destinationLocData = destLatLng; // set destination location data to the destination information
 
-                        //Send the request
-                      /*  if(currentRequester != null) {
-                            currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
-                        }*/
 
                         FirebaseVariables.getDatabaseReference().child("Requests");
                     }
@@ -152,16 +148,17 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                                             .show();
                                     //Request currentRequest = dataSnapshot.getValue(Request.class);
                                     if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
+                                        Log.d("SureWalk","Request has been accepted");
                                         Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
                                         accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                                         startActivity(accepted);
                                         finish();
                                     }
                                     else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-
+                                        Log.d("SureWalk","Request has been completed");
                                     }
                                     else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-
+                                        Log.d("SureWalk", "Request has been cancelled");
                                     }
                                 }
 
