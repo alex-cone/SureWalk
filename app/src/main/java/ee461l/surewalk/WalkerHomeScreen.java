@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.RemoteMessage;
 
+import Users.Request;
 import Users.Walker;
 public class WalkerHomeScreen extends Activity {
 
@@ -34,7 +35,7 @@ public class WalkerHomeScreen extends Activity {
     private TextView txtEmail;
     private Button btnLogout;
     private Button btnViewRequests;
-
+    private String requestKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +85,6 @@ public class WalkerHomeScreen extends Activity {
                         Toast.makeText(getApplicationContext(),
                                 "New Request", Toast.LENGTH_SHORT)
                                 .show();
-
-                        Intent intent = new Intent();
-                        PendingIntent pIntent = PendingIntent.getActivity(WalkerHomeScreen.this,0,intent,0);
-                        Notification notification = new Notification.Builder(WalkerHomeScreen.this)
-                                .setTicker("TickerTitle")
-                                .setContentTitle("SureWalk")
-                                .setContentText("New Request")
-                                .setSmallIcon(R.drawable.sure_walk_logo)
-                                .setContentIntent(pIntent).getNotification();
-
-                        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-                        nm.notify(0,notification);
 
 
 
