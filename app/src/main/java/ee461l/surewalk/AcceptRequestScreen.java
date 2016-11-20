@@ -56,8 +56,6 @@ public class AcceptRequestScreen extends Activity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-
                         currentRequest = dataSnapshot.child(requestKey).getValue(Request.class);
 
                         Requester requester = currentRequest.getRequester();
