@@ -81,9 +81,7 @@ public class AcceptRequestScreen extends Activity {
             public void onClick(View view) {
                 if(currentRequest != null){
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
-                    Walker mockWalker = new Walker();
-                    mockWalker.setWalker("Test", "test@utexas.edu", "5555555555", "no");
-                    currentRequest.setWalker(mockWalker);
+                    currentRequest.setWalker(FirebaseVariables.getCurrentWalker());
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
                     Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
                     intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));

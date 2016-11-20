@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import Users.Walker;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnLogin;
@@ -158,6 +160,8 @@ public class LoginActivity extends AppCompatActivity {
                             String registeredUID = snapshot.getKey();
                             if(registeredUID.equals(userId)){
                                 Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class);
+                                Walker walker = snapshot.getValue(Walker.class);
+                                FirebaseVariables.setCurrentWalker(walker);
                                 startActivity(intent);
                                 finish();
                                 return;
