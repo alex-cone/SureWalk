@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
+
+import Users.Requester;
 
 public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     private ImageView profilePicture;
@@ -34,9 +37,11 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
         btnCallWalker = (Button) findViewById(R.id.CallRequester);
         btnMessageWalker = (Button) findViewById(R.id.TextRequeseter);
         btnCancelRequest = (Button) findViewById(R.id.CancelRequest);
-
-        txtName.setText("Alex is on the way!");
-        walkerPhoneNumber = "832-931-0841";
+        Bundle extras = getIntent().getExtras();
+        currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
+      //  profilePicture.setImageResource(currentRequest.getWalker().);
+        txtName.setText(/*currentRequest.getWalker().username +*/  "Walker is on the way!");
+        walkerPhoneNumber = currentRequest.getWalker().phoneNumber;
 
 
         btnCallWalker.setOnClickListener(new View.OnClickListener() {

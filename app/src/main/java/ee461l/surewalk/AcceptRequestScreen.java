@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import Users.Request;
 import Users.Requester;
@@ -83,7 +84,8 @@ public class AcceptRequestScreen extends Activity {
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
 
-                    Intent intent = new Intent(AcceptRequestScreen.this, WalkerViewRequests.class);
+                    Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
+                    intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                     startActivity(intent);
                     finish();
                 }

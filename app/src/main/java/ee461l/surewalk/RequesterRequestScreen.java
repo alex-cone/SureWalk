@@ -1,6 +1,7 @@
 package ee461l.surewalk;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.text.InputType;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,6 +32,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -121,7 +127,38 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     if(currentRequester != null) {
                         currentRequest = currentRequester.newRequest(currentLocData, destinationLocData, RequesterRequestScreen.this);
                     }
+                    DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
+                    final DatabaseReference mypostref = requestDatabase.push();
 
+                    mypostref.addValueEventListener(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Toast.makeText(RequesterRequestScreen.this.getApplicationContext(),
+                                            "Something was changed 0_o", Toast.LENGTH_SHORT)
+                                            .show();
+                                    //Request currentRequest = dataSnapshot.getValue(Request.class);
+                                    if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
+                                        Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
+                                        accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                                        startActivity(accepted);
+                                        finish();
+                                    }
+                                    else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
+
+                                    }
+                                    else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    // Getting Post failed, log a message
+                                    Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                                    // ...
+                                }
+                            });
 
                 }
                 //Else in the requesting state
@@ -287,4 +324,5 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         }
         return destinationLocation;
     }
+
 }

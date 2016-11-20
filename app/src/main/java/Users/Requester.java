@@ -3,6 +3,7 @@ package Users;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ee461l.surewalk.FirebaseVariables;
+import ee461l.surewalk.RequesterCurrentlyWalkingScreen;
+import ee461l.surewalk.RequesterRequestScreen;
 
 /**
  * Created by Diego on 10/15/2016.
@@ -42,7 +45,7 @@ public class Requester {
         newRequest.setRequest(null, this, currLoc, dest, mypostref.getKey());
 
         mypostref.setValue(newRequest);
-
+        /*
         mypostref.addValueEventListener(
                 new ValueEventListener() {
                     @Override
@@ -69,7 +72,7 @@ public class Requester {
                         // ...
                     }
                 });
-
+        */
         Log.d("SureWalk", "You sent a Request");
         return newRequest;
     }
