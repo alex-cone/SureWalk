@@ -44,6 +44,7 @@ import java.util.Locale;
 
 import Users.Request;
 import Users.Requester;
+import Users.Walker;
 
 public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -302,9 +303,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         return destinationLocation;
     }
 
-    private void setUpRequestListener(final Request currentRequest){
+    private void setUpRequestListener(final Request requestToWatch){
 
-        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId()).addValueEventListener(
+        FirebaseVariables.getDatabaseReference().child("Requests").child(requestToWatch.getFirebaseId()).addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -315,7 +316,13 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
                             Log.d("SureWalk","Request has been accepted");
                             Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
-                            accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                            //TODO Make this dyanamic
+                            Walker mockWalker = new Walker();
+                            mockWalker.setWalker("Test", "test@utexas.edu", "5555555555", "no");
+                            requestToWatch.setWalker(mockWalker);
+                            //End of TODO
+
+                            accepted.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
                             startActivity(accepted);
                             finish();
                         }
