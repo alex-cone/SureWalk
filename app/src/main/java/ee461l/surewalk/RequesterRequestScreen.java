@@ -124,7 +124,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
                         destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
                         //destinationLocData = destLatLng; // set destination location data to the destination information
-                        
+
                         //Send the request
                         if(currentRequester != null) {
                             currentRequest = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
@@ -152,7 +152,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                                     Toast.makeText(RequesterRequestScreen.this.getApplicationContext(),
                                             "Something was changed 0_o", Toast.LENGTH_SHORT)
                                             .show();
-                                    //Request currentRequest = dataSnapshot.getValue(Request.class);
+                                    Request currentRequest = dataSnapshot.getValue(Request.class);
                                     if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
                                         Log.d("SureWalk","Request has been accepted");
                                         Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
