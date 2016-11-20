@@ -18,8 +18,17 @@
     <string name="btn_logout">LOGOUT</string>
     <string name="btn_request">MAKE REQUEST</string>
     <string name="name">Fullname</string>
+    <string name="title_activity_look_at_requests">LookAtRequests</string>
 
     <string name="accept">ACCEPT REQUEST</string>
     <string name="return_to_request">BACK TO REQUESTS</string>
-    <string name = "return_to_home">RETURN HOME</string>
+
+    <!--Strings for requester_currently_walking_screen-->
+    <string name="YourWalker">Your walker</string>
+    <string name="OnTheWay">is on the way!</string>
+    <string name="CANCEL">CANCEL REQUEST</string>
+    <string name="return_to_home">RETURN HOME</string>
+
+    <!--Strings for walker_currently_walking_screen-->
+    <string name="CANCEL_JOB">CANCEL WALK</string>
 </resources>

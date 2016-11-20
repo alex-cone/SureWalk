@@ -26,9 +26,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import Users.Request;
 import Users.Requester;
+import Users.Walker;
 
 /**
  * Created by Diego on 11/7/2016.
@@ -69,8 +71,6 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-
                         currentRequest = dataSnapshot.child(requestKey).getValue(Request.class);
 
                         Requester requester = currentRequest.getRequester();
@@ -108,9 +108,10 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
             public void onClick(View view) {
                 if(currentRequest != null){
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
+                    currentRequest.setWalker(FirebaseVariables.getCurrentWalker());
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
-
-                    Intent intent = new Intent(AcceptRequestScreen.this, WalkerViewRequests.class);
+                    Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
+                    intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                     startActivity(intent);
                     finish();
                 }

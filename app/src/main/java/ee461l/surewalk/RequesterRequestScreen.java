@@ -1,10 +1,13 @@
 package ee461l.surewalk;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -30,6 +33,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -37,6 +44,7 @@ import java.util.Locale;
 
 import Users.Request;
 import Users.Requester;
+import Users.Walker;
 
 public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -123,18 +131,19 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         if(currentRequester != null) {
                             currentRequest = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
                                     destinationLocData.getLatitude(), destinationLocData.getLongitude());
+                            setUpRequestListener(currentRequest);
+
                         }
-
-                        FirebaseVariables.getDatabaseReference().child("Requests");
                     }
-
-                    //Location can't be found
+                    /*
+                    //Send the request
+                    if(currentRequester != null) {
+                        currentRequest = currentRequester.newRequest(currentLocData, destinationLocData, RequesterRequestScreen.this);
+                        //Location can't be found
+                    }*/
                     else {
                         Toast.makeText(getApplicationContext(), "Can't find destination", Toast.LENGTH_SHORT).show();
                     }
-
-
-
                 }
                 //Else in the requesting state
                 else {
@@ -293,4 +302,45 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         }
         return destinationLocation;
     }
+
+    private void setUpRequestListener(final Request requestToWatch){
+
+        FirebaseVariables.getDatabaseReference().child("Requests").child(requestToWatch.getFirebaseId()).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Toast.makeText(RequesterRequestScreen.this.getApplicationContext(),
+                                "Something was changed 0_o", Toast.LENGTH_SHORT)
+                                .show();
+                        Request currentRequest = dataSnapshot.getValue(Request.class);
+                        if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
+                            Log.d("SureWalk","Request has been accepted");
+                            Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
+                            //TODO Make this dyanamic
+                            Walker mockWalker = new Walker();
+                            mockWalker.setWalker("Test", "test@utexas.edu", "5555555555", "no");
+                            requestToWatch.setWalker(mockWalker);
+                            //End of TODO
+
+                            accepted.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
+                            startActivity(accepted);
+                            finish();
+                        }
+                        else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
+                            Log.d("SureWalk","Request has been completed");
+                        }
+                        else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
+                            Log.d("SureWalk", "Request has been cancelled");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
+    }
+
 }

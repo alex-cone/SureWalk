@@ -3,6 +3,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import Users.Walker;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -58,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                     // Check for empty data in the form
                     if (!email.isEmpty() && !password.isEmpty()) {
                         // login user
+                        //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                         userLogin(email, password);
                     } else {
                         // Prompt user to enter credentials
@@ -156,6 +160,8 @@ public class LoginActivity extends AppCompatActivity {
                             String registeredUID = snapshot.getKey();
                             if(registeredUID.equals(userId)){
                                 Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class);
+                                Walker walker = snapshot.getValue(Walker.class);
+                                FirebaseVariables.setCurrentWalker(walker);
                                 startActivity(intent);
                                 finish();
                                 return;
