@@ -94,7 +94,7 @@ public class WalkerHomeScreen extends Activity {
                                 .setSmallIcon(R.drawable.sure_walk_logo)
                                 .setContentIntent(pIntent).getNotification();
 
-                        notification.flags = Notification.FLAG_AUTO_CANCEL;
+                        notification.flags |= Notification.FLAG_AUTO_CANCEL;
                         NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                         nm.notify(0,notification);
 
@@ -123,6 +123,7 @@ public class WalkerHomeScreen extends Activity {
                     }
                 }
         );
+        
 
 
         // Logout button click event
