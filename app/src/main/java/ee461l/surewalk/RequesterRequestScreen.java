@@ -108,24 +108,37 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 int state = (Integer) requestButton.getTag();
                 //Original state
                 if (state == 1) {
-                    requestButton.setText("CANCEL");
-                    //Disable all text fields so you cant change while requesting
-                    disableText(address1);
-                    disableText(address2);
-                    disableText(comments);
-                    v.setTag(0);
-
-                    //TODO FIX: Attempt to display destination marker
                     String address = address1.getText().toString() + " " + address2.getText().toString();
                     Address destAddress = getLocationFromAddress(address);
-                    LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
-                    destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
 
-                    destinationLocData = destLatLng; // set destination location data to the destination information
+                    //Geocoder can find the location specified
+                    if(destAddress != null) {
+                        //Disable all text fields so you cant change while requesting
+                        requestButton.setText("CANCEL");
+                        disableText(address1);
+                        disableText(address2);
+                        disableText(comments);
+                        v.setTag(0);
+
+                        LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
+                        destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
+                        destinationLocData = destLatLng; // set destination location data to the destination information
+
+                        //Send the request
+                      /*  if(currentRequester != null) {
+                            currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
+                        }*/
+
+                        FirebaseVariables.getDatabaseReference().child("Requests");
+                    }
 
                     //Send the request
                     if(currentRequester != null) {
                         currentRequest = currentRequester.newRequest(currentLocData, destinationLocData, RequesterRequestScreen.this);
+                        //Location can't be found
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Can't find destination", Toast.LENGTH_SHORT).show();
                     }
                     DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
                     final DatabaseReference mypostref = requestDatabase.push();
@@ -160,11 +173,12 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                                 }
                             });
 
+
                 }
                 //Else in the requesting state
                 else {
-                    requestButton.setText("REQUEST WALKER");
                     //Reenable all the text fields
+                    requestButton.setText("REQUEST WALKER");
                     enableText(address1, false);
                     enableText(address2, false);
                     enableText(comments, true);
@@ -173,8 +187,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     //Cancel the request
                       //currentRequester.cancelRequest(currentRequest);
 
-                    //TODO FIX: Remove destination marker
-                    //destinationMarker.remove();
+                    destinationMarker.remove();
                 }
             }
         });
@@ -220,11 +233,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        //LatLng uTexas = new LatLng(30, -97);
-        //mMap.addMarker(new MarkerOptions().position(uTexas).title("University of TExas"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(uTexas));
     }
 
     //Location Services
@@ -320,7 +328,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
             destinationLocation = addresses.get(0);
         }
         catch(Exception e) {
-
+            return null;
         }
         return destinationLocation;
     }
