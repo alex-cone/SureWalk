@@ -89,6 +89,8 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                         MarkerOptions requesterMarker = new MarkerOptions().position(requesterLoc);
                         MarkerOptions destinationMarker = new MarkerOptions().position(destinationLoc);
 
+                        mMap.addMarker(requesterMarker);
+                        mMap.addMarker(destinationMarker);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(requesterLoc));
                         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
