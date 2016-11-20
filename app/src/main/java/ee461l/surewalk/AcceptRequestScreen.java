@@ -52,7 +52,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
         setContentView(R.layout.walker_accept_request_screen);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.walkerMap);
         mapFragment.getMapAsync(this);
 
         Bundle extras = getIntent().getExtras();
