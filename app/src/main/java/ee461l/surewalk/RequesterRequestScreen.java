@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -64,7 +65,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private Marker destinationMarker;
 
     private Requester currentRequester;
-    private Request currentRequest;
+    private DatabaseReference requestReference;
 
     //The current and destination location data. To send to requester object to make a request
     private Location currentLocData;
@@ -127,11 +128,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
                         //Send the request
                         if(currentRequester != null) {
-                            currentRequest = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
+                            requestReference = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
                                     destinationLocData.getLatitude(), destinationLocData.getLongitude());
-                        }
+                            setUpRequestListener(requestReference);
 
-                        FirebaseVariables.getDatabaseReference().child("Requests");
+                        }
                     }
                     /*
                     //Send the request
@@ -142,41 +143,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     else {
                         Toast.makeText(getApplicationContext(), "Can't find destination", Toast.LENGTH_SHORT).show();
                     }
-                    DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
-                    final DatabaseReference mypostref = requestDatabase.push();
-
-                    mypostref.addValueEventListener(
-                            new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Toast.makeText(RequesterRequestScreen.this.getApplicationContext(),
-                                            "Something was changed 0_o", Toast.LENGTH_SHORT)
-                                            .show();
-                                    Request currentRequest = dataSnapshot.getValue(Request.class);
-                                    if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
-                                        Log.d("SureWalk","Request has been accepted");
-                                        Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
-                                        accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
-                                        startActivity(accepted);
-                                        finish();
-                                    }
-                                    else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-                                        Log.d("SureWalk","Request has been completed");
-                                    }
-                                    else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-                                        Log.d("SureWalk", "Request has been cancelled");
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    // Getting Post failed, log a message
-                                    Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                                    // ...
-                                }
-                            });
-
-
                 }
                 //Else in the requesting state
                 else {
@@ -334,6 +300,39 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
             return null;
         }
         return destinationLocation;
+    }
+
+    private void setUpRequestListener(final DatabaseReference mypostref){
+        mypostref.addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Toast.makeText(RequesterRequestScreen.this.getApplicationContext(),
+                                "Something was changed 0_o", Toast.LENGTH_SHORT)
+                                .show();
+                        Request currentRequest = dataSnapshot.getValue(Request.class);
+                        if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
+                            Log.d("SureWalk","Request has been accepted");
+                            Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
+                            accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                            startActivity(accepted);
+                            finish();
+                        }
+                        else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
+                            Log.d("SureWalk","Request has been completed");
+                        }
+                        else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
+                            Log.d("SureWalk", "Request has been cancelled");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
     }
 
 }

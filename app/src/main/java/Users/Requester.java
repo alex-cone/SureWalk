@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,51 +40,36 @@ public class Requester {
     }
 
 
-    public Request newRequest(/*LatLng currLoc, LatLng dest*/ double currLocLat, double currLocLong,
+    public DatabaseReference newRequest(/*LatLng currLoc, LatLng dest*/ double currLocLat, double currLocLong,
                               double destinationLocLat, double destinationLocLong) {
         DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
-        final DatabaseReference mypostref = requestDatabase.push();
+        final DatabaseReference requestReference = requestDatabase.push();
 
         Request newRequest = new Request();
-        newRequest.setRequest(null, this, currLocLat, currLocLong, destinationLocLat, destinationLocLong, mypostref.getKey());
+        newRequest.setRequest(null, this, currLocLat, currLocLong, destinationLocLat, destinationLocLong, requestReference.getKey());
 
-        mypostref.setValue(newRequest);
-        /*
-        mypostref.addValueEventListener(
+        requestReference.setValue(newRequest);
+
+        Log.d("SureWalk", "You sent a Request");
+        return requestReference;
+    }
+
+    public void cancelRequest(final DatabaseReference requestReference) {
+        requestReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Toast.makeText(act.getApplicationContext(),
-                                "Something was changed 0_o", Toast.LENGTH_SHORT)
-                                .show();
-                        Request currentRequest = dataSnapshot.getValue(Request.class);
-                        if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
-
-                        }
-                        else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-
-                        }
-                        else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-
-                        }
+                        Request request = dataSnapshot.getValue(Request.class);
+                        request.setStatus(Request.STATUS.CANCELED);
+                        requestReference.setValue(request);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                        // ...
                     }
                 });
-        */
-        Log.d("SureWalk", "You sent a Request");
-        return newRequest;
-    }
 
-    public void cancelRequest(Request request) {
-        final DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests").child(request.getFirebaseId());
-        request.setStatus(Request.STATUS.CANCELED);
-        requestDatabase.setValue(request);
+
 
     }
 }
