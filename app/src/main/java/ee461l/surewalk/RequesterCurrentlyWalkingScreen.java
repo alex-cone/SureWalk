@@ -27,9 +27,6 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     private Button btnCancelRequest;
     private String walkerPhoneNumber;
     private Users.Request currentRequest;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorage;
     private String requestKey;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
