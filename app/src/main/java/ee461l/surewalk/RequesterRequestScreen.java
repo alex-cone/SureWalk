@@ -61,8 +61,8 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private Request currentRequest;
 
     //The current and destination location data. To send to requester object to make a request
-    private LatLng currentLocData;
-    private LatLng destinationLocData;
+    private Location currentLocData;
+    private Address destinationLocData;
 
 
     @Override
@@ -104,6 +104,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 if (state == 1) {
                     String address = address1.getText().toString() + " " + address2.getText().toString();
                     Address destAddress = getLocationFromAddress(address);
+                    destinationLocData = destAddress;
 
                     //Geocoder can find the location specified
                     if(destAddress != null) {
@@ -116,11 +117,12 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
                         LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
                         destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination"));
-                        destinationLocData = destLatLng; // set destination location data to the destination information
+                        //destinationLocData = destLatLng; // set destination location data to the destination information
 
                         //Send the request
                         if(currentRequester != null) {
-                            currentRequest = currentRequester.newRequest(currentLocData, destinationLocData);
+                            currentRequest = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
+                                    destinationLocData.getLatitude(), destinationLocData.getLongitude());
                         }
 
                         FirebaseVariables.getDatabaseReference().child("Requests");
@@ -224,7 +226,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
-        currentLocData = latLng; // Set the current location data to the current location
+        currentLocData = location; // Set the current location data to the current location
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
