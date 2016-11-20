@@ -65,7 +65,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private Marker destinationMarker;
 
     private Requester currentRequester;
-    private DatabaseReference requestReference;
+    private Request currentRequest;
 
     //The current and destination location data. To send to requester object to make a request
     private Location currentLocData;
@@ -128,9 +128,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
                         //Send the request
                         if(currentRequester != null) {
-                            requestReference = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
+                            currentRequest = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
                                     destinationLocData.getLatitude(), destinationLocData.getLongitude());
-                            setUpRequestListener(requestReference);
+                            setUpRequestListener(currentRequest);
 
                         }
                     }
@@ -302,8 +302,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         return destinationLocation;
     }
 
-    private void setUpRequestListener(final DatabaseReference mypostref){
-        mypostref.addValueEventListener(
+    private void setUpRequestListener(final Request currentRequest){
+
+        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId()).addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

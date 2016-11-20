@@ -40,7 +40,7 @@ public class Requester {
     }
 
 
-    public DatabaseReference newRequest(/*LatLng currLoc, LatLng dest*/ double currLocLat, double currLocLong,
+    public Request newRequest(/*LatLng currLoc, LatLng dest*/ double currLocLat, double currLocLong,
                               double destinationLocLat, double destinationLocLong) {
         DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
         final DatabaseReference requestReference = requestDatabase.push();
@@ -51,7 +51,7 @@ public class Requester {
         requestReference.setValue(newRequest);
 
         Log.d("SureWalk", "You sent a Request");
-        return requestReference;
+        return newRequest;
     }
 
     public void cancelRequest(final DatabaseReference requestReference) {
