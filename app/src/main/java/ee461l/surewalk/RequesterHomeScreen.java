@@ -29,8 +29,6 @@ public class RequesterHomeScreen extends Activity {
     private Button btnLogout;
     private Button btnRequest;
 
-    private Requester currentRequester;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +57,8 @@ public class RequesterHomeScreen extends Activity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
-                        currentRequester = dataSnapshot.getValue(Requester.class);
-                        txtName.setText(currentRequester.username);
+                        FirebaseVariables.setCurrentRequester(dataSnapshot.getValue(Requester.class));
+                        txtName.setText(FirebaseVariables.getCurrentRequester().username);
 
                         //user.email now has your email value
                     }
@@ -91,7 +89,6 @@ public class RequesterHomeScreen extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RequesterHomeScreen.this, RequesterRequestScreen.class);
-                intent.putExtra("Requester", (new Gson()).toJson(currentRequester));
                 startActivity(intent);
                 finish();
             }
