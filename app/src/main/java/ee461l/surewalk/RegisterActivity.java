@@ -210,7 +210,8 @@ public class RegisterActivity extends AppCompatActivity {
                                 /*Remove email from database and update with FirebaseID*/
                                 FirebaseVariables.getDatabaseReference().child("Walkers").child(snapshot.getKey().toString()).removeValue();
                                 FirebaseVariables.getDatabaseReference().child("Walkers").child(userId).setValue(walker);
-                                Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
+                                FirebaseVariables.setCurrentWalker(walker);
+
                                 Intent intent = new Intent(RegisterActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
                                 finish();
@@ -266,6 +267,7 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("SureWalk", username + " " + email + " " + phoneNumber + " " + userId);
 
         FirebaseVariables.getDatabaseReference().child("Requesters").child(userId).setValue(requester);
+        FirebaseVariables.setCurrentRequester(requester);
         return;
     }
 
