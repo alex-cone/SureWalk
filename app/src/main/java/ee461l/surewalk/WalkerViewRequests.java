@@ -82,7 +82,7 @@ public class WalkerViewRequests extends AppCompatActivity {
 
                         }
 
-                        Intent intent = new Intent();
+                        Intent intent = new Intent(getApplicationContext(),WalkerViewRequests.class);
                         PendingIntent pIntent = PendingIntent.getActivity(WalkerViewRequests.this,0,intent,0);
                         Notification notification = new Notification.Builder(WalkerViewRequests.this)
                                 .setTicker("TickerTitle")
@@ -90,7 +90,7 @@ public class WalkerViewRequests extends AppCompatActivity {
                                 .setContentText("Available Requests: "+notiCount)
                                 .setSmallIcon(R.drawable.sure_walk_logo)
                                 .setContentIntent(pIntent).getNotification();
-
+                        
                         notification.flags |= Notification.FLAG_AUTO_CANCEL;
                         NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                         nm.notify(0,notification);
