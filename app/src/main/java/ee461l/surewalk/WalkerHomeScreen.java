@@ -85,9 +85,6 @@ public class WalkerHomeScreen extends Activity {
                         Toast.makeText(getApplicationContext(),
                                 "New Request", Toast.LENGTH_SHORT)
                                 .show();
-
-
-
                     }
 
                     @Override
