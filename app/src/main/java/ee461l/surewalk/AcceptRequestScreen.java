@@ -3,6 +3,7 @@ package ee461l.surewalk;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,12 +35,14 @@ import Users.Walker;
 /**
  * Created by Diego on 11/7/2016.
  */
-public class AcceptRequestScreen extends Activity {
+public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyCallback {
     private ImageView profilePicture;
     private TextView txtName;
     private TextView txtPhoneNumber;
     private Button btnAcceptRequest;
     private Button btnBackToRequests;
+
+    private GoogleMap mMap;
 
     private String requestKey;
     private Request currentRequest;
@@ -41,6 +50,11 @@ public class AcceptRequestScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.walker_accept_request_screen);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.walkerMap);
+        mapFragment.getMapAsync(this);
+
         Bundle extras = getIntent().getExtras();
         if(extras != null){
             requestKey = extras.getString("RequestID");
@@ -57,8 +71,6 @@ public class AcceptRequestScreen extends Activity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-
                         currentRequest = dataSnapshot.child(requestKey).getValue(Request.class);
 
                         Requester requester = currentRequest.getRequester();
@@ -69,6 +81,19 @@ public class AcceptRequestScreen extends Activity {
                                 .using(new FirebaseImageLoader())
                                 .load(profilePicutreRef)
                                 .into(profilePicture);
+
+                        //Show location on map
+                        LatLng requesterLoc = new LatLng(currentRequest.getCurrentLatitude(), currentRequest.getCurrentLongitude());
+                        LatLng destinationLoc = new LatLng(currentRequest.getDestinationLatitude(), currentRequest.getDestinationLongitude());
+
+                        MarkerOptions requesterMarker = new MarkerOptions().position(requesterLoc);
+                        MarkerOptions destinationMarker = new MarkerOptions().position(destinationLoc);
+
+                        mMap.addMarker(requesterMarker);
+                        mMap.addMarker(destinationMarker);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(requesterLoc));
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
                     }
 
                     @Override
@@ -83,9 +108,7 @@ public class AcceptRequestScreen extends Activity {
             public void onClick(View view) {
                 if(currentRequest != null){
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
-                    Walker mockWalker = new Walker();
-                    mockWalker.setWalker("Test", "test@utexas.edu", "5555555555", "no");
-                    currentRequest.setWalker(mockWalker);
+                    currentRequest.setWalker(FirebaseVariables.getCurrentWalker());
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
                     Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
                     intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
@@ -105,5 +128,9 @@ public class AcceptRequestScreen extends Activity {
             }
         });
 
+    }
+
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
     }
 }

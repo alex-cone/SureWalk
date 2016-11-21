@@ -27,9 +27,6 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     private Button btnCancelRequest;
     private String walkerPhoneNumber;
     private Users.Request currentRequest;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorage;
     private String requestKey;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +85,7 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
+                        FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).removeValue();
                         startActivity(option);
                         finish();
                         break;

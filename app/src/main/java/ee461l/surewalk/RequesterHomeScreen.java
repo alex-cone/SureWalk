@@ -29,8 +29,6 @@ public class RequesterHomeScreen extends Activity {
     private Button btnLogout;
     private Button btnRequest;
 
-    private Requester currentRequester;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,25 +51,7 @@ public class RequesterHomeScreen extends Activity {
         txtEmail = (TextView) findViewById(R.id.email);
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnRequest = (Button) findViewById(R.id.btnRequest);
-
-        FirebaseVariables.getDatabaseReference().child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        currentRequester = dataSnapshot.getValue(Requester.class);
-                        txtName.setText(currentRequester.username);
-
-                        //user.email now has your email value
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                        // ...
-                    }
-                });
+        txtName.setText(FirebaseVariables.getCurrentRequester().username);
 
 
         // Displaying the user details on the screen
@@ -91,7 +71,6 @@ public class RequesterHomeScreen extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RequesterHomeScreen.this, RequesterRequestScreen.class);
-                intent.putExtra("Requester", (new Gson()).toJson(currentRequester));
                 startActivity(intent);
                 finish();
             }

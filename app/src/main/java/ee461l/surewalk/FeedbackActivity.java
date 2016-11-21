@@ -11,9 +11,12 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Users.Request;
 
 public class FeedbackActivity extends AppCompatActivity {
     private EditText feedback;
@@ -24,6 +27,9 @@ public class FeedbackActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feedback);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         feedback = (EditText) findViewById(R.id.feedback);
+
+        Bundle extras = getIntent().getExtras();
+        final Request currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
         Log.i("test", "test");
         //Feedback Submit Button Listener
         btnSubmit.setOnClickListener(new View.OnClickListener(){
@@ -36,10 +42,17 @@ public class FeedbackActivity extends AppCompatActivity {
                     List<String> toEmailList;
                     toEmailList = new ArrayList<String>();
                     toEmailList.add(toEmails);
-                    String emailSubject = "User Feedback";
-                    String emailBody = feedbackMessage;
+                    String emailSubject = "User Feedback from " + FirebaseVariables.getCurrentRequester().username;
+                    String emailBody = "Username: " + FirebaseVariables.getCurrentRequester().username + "\n\n"
+                            + "Email: " + FirebaseVariables.getCurrentRequester().email + "\n\n"
+                            + "Surewalker: " + currentRequest.getWalker().username +"\n\n"
+                            + "Message:\n" + feedbackMessage;
                     new SendMailTask(FeedbackActivity.this).execute(fromEmail, fromPassword, toEmailList, emailSubject, emailBody);
+                    FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).removeValue();
+                    Intent intent = new Intent(FeedbackActivity.this, RequesterHomeScreen.class);
+                    startActivity(intent);
                     Log.i("test","succeed");
+                    finish();
                 } catch (Exception e) {
                     Log.i("test", "failed");
                 }

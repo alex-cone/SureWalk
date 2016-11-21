@@ -68,7 +68,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
     private Marker destinationMarker;
 
-    private Requester currentRequester;
     private Request currentRequest;
 
     //The current and destination location data. To send to requester object to make a request
@@ -84,11 +83,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            currentRequester =  new Gson().fromJson(extras.getString("Requester"), Requester.class);
-
-        }
 
         //Location Services
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -131,8 +125,8 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         //destinationLocData = destLatLng; // set destination location data to the destination information
 
                         //Send the request
-                        if(currentRequester != null) {
-                            currentRequest = currentRequester.newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
+                        if(FirebaseVariables.getCurrentRequester() != null) {
+                            currentRequest = FirebaseVariables.getCurrentRequester().newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
                                     destinationLocData.getLatitude(), destinationLocData.getLongitude());
                             setUpRequestListener(currentRequest);
 
@@ -334,18 +328,15 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                             nm.notify(0,notification);
 
                             Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
-                            //TODO Make this dyanamic
-                            Walker mockWalker = new Walker();
-                            mockWalker.setWalker("Test", "test@utexas.edu", "5555555555", "no");
-                            requestToWatch.setWalker(mockWalker);
-                            //End of TODO
-
                             accepted.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
                             startActivity(accepted);
                             finish();
                         }
                         else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-                            Log.d("SureWalk","Request has been completed");
+                            Intent completed = new Intent(RequesterRequestScreen.this, FeedbackActivity.class);
+                            completed.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
+                            startActivity(completed);
+                            finish();
                         }
                         else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
                             Log.d("SureWalk", "Request has been cancelled");
