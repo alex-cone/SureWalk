@@ -315,7 +315,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                             finish();
                         }
                         else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-                            Log.d("SureWalk","Request has been completed");
+                            Intent completed = new Intent(RequesterRequestScreen.this, FeedbackActivity.class);
+                            completed.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
+                            startActivity(completed);
+                            finish();
                         }
                         else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
                             Log.d("SureWalk", "Request has been cancelled");
