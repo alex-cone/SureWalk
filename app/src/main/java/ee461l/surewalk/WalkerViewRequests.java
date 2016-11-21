@@ -90,7 +90,7 @@ public class WalkerViewRequests extends AppCompatActivity {
                                 .setContentText("Available Requests: "+notiCount)
                                 .setSmallIcon(R.drawable.sure_walk_logo)
                                 .setContentIntent(pIntent).getNotification();
-                        
+
                         notification.flags |= Notification.FLAG_AUTO_CANCEL;
                         NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                         nm.notify(0,notification);

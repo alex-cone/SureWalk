@@ -1,6 +1,9 @@
 package ee461l.surewalk;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -315,6 +318,21 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         Request currentRequest = dataSnapshot.getValue(Request.class);
                         if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
                             Log.d("SureWalk","Request has been accepted");
+
+                            //Notify Requester - Request has been accepted
+                            Intent intent = new Intent(getApplicationContext(),RequesterRequestScreen.class);
+                            PendingIntent pIntent = PendingIntent.getActivity(RequesterRequestScreen.this,0,intent,0);
+                            Notification notification = new Notification.Builder(RequesterRequestScreen.this)
+                                    .setTicker("TickerTitle")
+                                    .setContentTitle("SureWalk")
+                                    .setContentText("Your request has been accepted!")
+                                    .setSmallIcon(R.drawable.sure_walk_logo)
+                                    .setContentIntent(pIntent).getNotification();
+
+                            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                            NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                            nm.notify(0,notification);
+
                             Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
                             //TODO Make this dyanamic
                             Walker mockWalker = new Walker();
