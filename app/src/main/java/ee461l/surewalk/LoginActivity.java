@@ -115,6 +115,8 @@ public class LoginActivity extends AppCompatActivity {
                                                     if(userId.equals(snapshot.getKey())) {
                                                         Log.d("SureWalk", "Hey, you found a walker. That's pretty good");
                                                         Intent intent = new Intent(LoginActivity.this, WalkerHomeScreen.class); //TODO: needs to go to Walker Screen
+                                                        Walker walker = snapshot.getValue(Walker.class);
+                                                        FirebaseVariables.setCurrentWalker(walker);
                                                         startActivity(intent);
                                                         finish();
                                                         return;

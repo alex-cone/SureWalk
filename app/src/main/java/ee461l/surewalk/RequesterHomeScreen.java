@@ -51,11 +51,22 @@ public class RequesterHomeScreen extends Activity {
         txtEmail = (TextView) findViewById(R.id.email);
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnRequest = (Button) findViewById(R.id.btnRequest);
-        txtName.setText(FirebaseVariables.getCurrentRequester().username);
+
+           FirebaseVariables.getDatabaseReference().child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+                        FirebaseVariables.setCurrentRequester(dataSnapshot.getValue(Requester.class));
+                        txtName.setText(FirebaseVariables.getCurrentRequester().username);
+                   }
+                    @Override
+                  public void onCancelled(DatabaseError databaseError) {
+                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
 
 
-        // Displaying the user details on the screen
-
+                    }
+                });
 
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener() {
