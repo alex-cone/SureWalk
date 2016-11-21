@@ -85,6 +85,7 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
+                        FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).removeValue();
                         startActivity(option);
                         finish();
                         break;
