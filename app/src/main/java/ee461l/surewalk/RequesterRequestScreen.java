@@ -314,8 +314,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                             Log.d("SureWalk","Request has been accepted");
 
                             //Notify Requester - Request has been accepted
-                            Intent intent = new Intent(getApplicationContext(),RequesterRequestScreen.class);
-                            PendingIntent pIntent = PendingIntent.getActivity(RequesterRequestScreen.this,0,intent,0);
+                            Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
+                            accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                            startActivity(accepted);
+
+                            PendingIntent pIntent = PendingIntent.getActivity(RequesterRequestScreen.this,0,accepted,0);
                             Notification notification = new Notification.Builder(RequesterRequestScreen.this)
                                     .setTicker("TickerTitle")
                                     .setContentTitle("SureWalk")
@@ -327,14 +330,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                             NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                             nm.notify(0,notification);
 
-                            Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
-                            accepted.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
-                            startActivity(accepted);
                             finish();
                         }
                         else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
                             Intent completed = new Intent(RequesterRequestScreen.this, FeedbackActivity.class);
-                            completed.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
+                            completed.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                             startActivity(completed);
                             finish();
                         }
