@@ -31,4 +31,5 @@
 
     <!--Strings for walker_currently_walking_screen-->
     <string name="CANCEL_JOB">CANCEL WALK</string>
+    <string name="COMPLETE_JOB">COMPLETE WALK</string>
 </resources>

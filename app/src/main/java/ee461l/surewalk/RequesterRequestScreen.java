@@ -306,9 +306,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Toast.makeText(RequesterRequestScreen.this.getApplicationContext(),
-                                "Something was changed 0_o", Toast.LENGTH_SHORT)
-                                .show();
                         Request currentRequest = dataSnapshot.getValue(Request.class);
                         if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
                             Log.d("SureWalk","Request has been accepted");

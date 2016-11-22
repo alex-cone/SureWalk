@@ -1,18 +1,29 @@
 package ee461l.surewalk;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
+
+import Users.Request;
+import Users.Requester;
 
 public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
     private ImageView profilePicture;
@@ -20,6 +31,7 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
     private Button btnCallRequester;
     private Button btnMessageRequester;
     private Button btnCancelWalk;
+    private Button btnCompleteWalk;
     private String requesterPhoneNumber;
     private Users.Request currentRequest;
     private FirebaseAuth firebaseAuth;
@@ -35,18 +47,42 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
         btnCallRequester = (Button) findViewById(R.id.CallRequester);
         btnMessageRequester = (Button) findViewById(R.id.TextRequeseter);
         btnCancelWalk = (Button) findViewById(R.id.CancelWalk);
+        btnCompleteWalk = (Button) findViewById(R.id.CompleteWalk);
         Bundle extras = getIntent().getExtras();
         currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
 
-        txtName.setText("You are on your way to Requester" /*+ currentRequest.getRequester().username*/);
+        txtName.setText("You are on your way to " + currentRequest.getRequester().username);
         requesterPhoneNumber = currentRequest.getRequester().phoneNumber;
+        requestKey = extras.getString("RequestKey");
+        FirebaseVariables.getDatabaseReference().child("Requests").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
 
+                        currentRequest = dataSnapshot.child(requestKey).getValue(Request.class);
+
+                        Requester requester = currentRequest.getRequester();
+                        StorageReference profilePicutreRef = FirebaseVariables.getStorageReference().child("userProfilePictures").child(requester.uid).child("ProfilePicture");
+                        Glide.with(getApplicationContext())
+                                .using(new FirebaseImageLoader())
+                                .load(profilePicutreRef)
+                                .into(profilePicture);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
 
         btnCallRequester.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                phoneIntent.setData(Uri.parse("tel:1-"+ requesterPhoneNumber));
+                phoneIntent.setData(Uri.parse("tel:"+ requesterPhoneNumber));
                 startActivity(phoneIntent);
             }
         });
@@ -54,14 +90,18 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
         btnMessageRequester.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Add the phone number in the data
                 Uri uri = Uri.parse("smsto:" + requesterPhoneNumber);
-                // Create intent with the action and data
                 Intent smsIntent = new Intent(Intent.ACTION_SENDTO, uri);
-                // smsIntent.setData(uri); // We just set the data in the constructor above
-                // Set the message
-                //smsIntent.putExtra("sms_body", smsBody);
                 startActivity(smsIntent);
+            }
+        });
+
+        btnCompleteWalk.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                currentRequest.setStatus(Request.STATUS.COMPLETED);
+                Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
+                yesOrNoConfirmation(intent, 1);
             }
         });
 
@@ -69,9 +109,37 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
-                startActivity(intent);
-                finish();
+                yesOrNoConfirmation(intent, 0);
             }
         });
+    }
+    public void yesOrNoConfirmation(final Intent option, final int status){
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        if(status == 0) {
+                            currentRequest.setStatus(Request.STATUS.CANCELED);
+                        }
+                        else if(status == 1){
+                            currentRequest.setStatus(Request.STATUS.COMPLETED);
+                        }
+                        startActivity(option);
+                        finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 }
