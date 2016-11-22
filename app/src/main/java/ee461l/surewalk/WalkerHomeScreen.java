@@ -77,10 +77,6 @@ public class WalkerHomeScreen extends Activity {
                 new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Toast.makeText(getApplicationContext(),
-                                "New Request", Toast.LENGTH_SHORT)
-                                .show();
-
                         Intent intent = new Intent();
                         PendingIntent pIntent = PendingIntent.getActivity(WalkerHomeScreen.this,0,intent,0);
                         Notification notification = new Notification.Builder(WalkerHomeScreen.this)
