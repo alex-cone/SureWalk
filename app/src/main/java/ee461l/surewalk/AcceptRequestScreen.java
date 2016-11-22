@@ -89,6 +89,7 @@ public class AcceptRequestScreen extends Activity {
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
                     Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
                     intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                    intent.putExtra("RequestKey",requestKey);
                     startActivity(intent);
                     finish();
                 }

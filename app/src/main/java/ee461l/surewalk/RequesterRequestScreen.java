@@ -316,7 +316,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
                             Log.d("SureWalk","Request has been accepted");
                             Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
-                            accepted.putExtra("RequestInfo",(new Gson()).toJson(requestToWatch));
+                            accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                             startActivity(accepted);
                             finish();
                         }
