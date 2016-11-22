@@ -1,5 +1,8 @@
 package ee461l.surewalk;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +60,7 @@ public class WalkerViewRequests extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         clearList();
+                        int notiCount = 0;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             requestKey = snapshot.getKey();
                             Log.d("SureWalk", requestKey);
@@ -72,8 +76,24 @@ public class WalkerViewRequests extends AppCompatActivity {
                             else if(req.getStatus().equals(Request.STATUS.COMPLETED)){
 
                             }
+                            else if(req.getStatus().equals(Request.STATUS.SUBMITTED)){
+                                notiCount++;
+                            }
 
                         }
+
+                        Intent intent = new Intent();
+                        PendingIntent pIntent = PendingIntent.getActivity(WalkerViewRequests.this,0,intent,0);
+                        Notification notification = new Notification.Builder(WalkerViewRequests.this)
+                                .setTicker("TickerTitle")
+                                .setContentTitle("SureWalk")
+                                .setContentText("Available Requests: "+notiCount)
+                                .setSmallIcon(R.drawable.sure_walk_logo)
+                                .setContentIntent(pIntent).getNotification();
+
+                        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                        nm.notify(0,notification);
                     }
 
                     @Override

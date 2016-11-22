@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import Users.Request;
 import Users.Walker;
 public class WalkerHomeScreen extends Activity {
 
@@ -30,7 +31,7 @@ public class WalkerHomeScreen extends Activity {
     private TextView txtEmail;
     private Button btnLogout;
     private Button btnViewRequests;
-
+    private String requestKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +90,6 @@ public class WalkerHomeScreen extends Activity {
                         notification.flags |= Notification.FLAG_AUTO_CANCEL;
                         NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                         nm.notify(0,notification);
-
-
-
                     }
 
                     @Override
