@@ -7,16 +7,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import Users.Request;
 import Users.Requester;
 
 public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
@@ -27,7 +34,6 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
     private Button btnCancelRequest;
     private String walkerPhoneNumber;
     private Users.Request currentRequest;
-    private String requestKey;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,15 +46,38 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
       //  profilePicture.setImageResource(currentRequest.getWalker().);
-        txtName.setText(/*currentRequest.getWalker().username +*/  "Walker is on the way!");
+        txtName.setText(currentRequest.getWalker().username +  " is on the way!");
         walkerPhoneNumber = currentRequest.getWalker().phoneNumber;
 
+        FirebaseVariables.getDatabaseReference().child("Requests").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+
+                        //currentRequest = dataSnapshot.child(requestKey).getValue(Request.class);
+
+                        Users.Walker walker = currentRequest.getWalker();
+                        StorageReference profilePicutreRef = FirebaseVariables.getStorageReference().child("userProfilePictures").child(walker.uid).child("ProfilePicture");
+                        Glide.with(getApplicationContext())
+                                .using(new FirebaseImageLoader())
+                                .load(profilePicutreRef)
+                                .into(profilePicture);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                });
 
         btnCallWalker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                phoneIntent.setData(Uri.parse("tel:1-"+ walkerPhoneNumber));
+                phoneIntent.setData(Uri.parse("tel:"+ walkerPhoneNumber));
                 startActivity(phoneIntent);
             }
         });
@@ -56,13 +85,8 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
         btnMessageWalker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Add the phone number in the data
                 Uri uri = Uri.parse("smsto:" + walkerPhoneNumber);
-                // Create intent with the action and data
                 Intent smsIntent = new Intent(Intent.ACTION_SENDTO, uri);
-                // smsIntent.setData(uri); // We just set the data in the constructor above
-                // Set the message
-                //smsIntent.putExtra("sms_body", smsBody);
                 startActivity(smsIntent);
             }
         });
@@ -85,7 +109,9 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
-                        FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).removeValue();
+                        //TODO: Walker should delete
+                        currentRequest.setStatus(Request.STATUS.CANCELED);
+                        FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).setValue(currentRequest);
                         startActivity(option);
                         finish();
                         break;
