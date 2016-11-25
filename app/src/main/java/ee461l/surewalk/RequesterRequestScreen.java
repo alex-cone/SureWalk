@@ -68,6 +68,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private LocationRequest mLocationRequest;
 
     private Marker destinationMarker;
+    private Marker currentLocationMarker;
 
     private Request currentRequest;
 
@@ -236,10 +237,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
         currentLocData = location; // Set the current location data to the current location
 
-        MarkerOptions options = new MarkerOptions()
+        currentLocationMarker = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title("Current Location");
-        mMap.addMarker(options);
+                .title("Current Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
@@ -281,7 +281,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
     @Override
     public void onLocationChanged(Location location) {
-        mMap.clear();
+        currentLocationMarker.remove();
         handleNewLocation(location);
     }
 

@@ -28,6 +28,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -64,6 +65,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private Location walkerLocation;
+    private Marker currentLocationMarker;
 
     private String requestKey;
     private Request currentRequest;
@@ -199,10 +201,8 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
         walkerLocation = location; // Set the current location data to the current location
 
 
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        mMap.addMarker(options);
+        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Current Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         
@@ -245,6 +245,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
+        currentLocationMarker.remove();
         handleNewLocation(location);
     }
 }
