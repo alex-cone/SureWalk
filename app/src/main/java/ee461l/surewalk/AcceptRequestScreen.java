@@ -57,7 +57,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
     private ImageView profilePicture;
     private TextView txtName;
-    private TextView txtPhoneNumber;
+    private TextView txtComments;
     private Button btnAcceptRequest;
     private Button btnBackToRequests;
 
@@ -97,7 +97,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
         profilePicture = (ImageView) findViewById(R.id.profile_picture);
         txtName = (TextView) findViewById(R.id.txtName);
-        txtPhoneNumber = (TextView) findViewById(R.id.txtPhoneNumber);
+        txtComments = (TextView) findViewById(R.id.txtComments);
         btnAcceptRequest = (Button) findViewById(R.id.btnAcceptRequest);
         btnBackToRequests = (Button) findViewById(R.id.btnBackToRequests);
 
@@ -109,7 +109,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
                         Requester requester = currentRequest.getRequester();
                         txtName.setText(requester.username);
-                        txtPhoneNumber.setText(requester.phoneNumber);
+                        txtComments.setText("Comments: " + currentRequest.getComments());
                         StorageReference profilePicutreRef = FirebaseVariables.getStorageReference().child("userProfilePictures").child(requester.uid).child("ProfilePicture");
                         Glide.with(getApplicationContext())
                                 .using(new FirebaseImageLoader())

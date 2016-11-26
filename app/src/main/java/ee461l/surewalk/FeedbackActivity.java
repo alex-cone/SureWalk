@@ -1,7 +1,6 @@
 package ee461l.surewalk;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -24,7 +21,7 @@ public class FeedbackActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feedback);
+        setContentView(R.layout.requester_feedback);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         feedback = (EditText) findViewById(R.id.feedback);
 

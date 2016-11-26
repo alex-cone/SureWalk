@@ -55,21 +55,22 @@
         android:layout_alignParentStart="true"
         android:weightSum="1">
 
-        <Button
+        <Button android:id="@+id/CompleteWalk"
+            style="@style/UT_Button"
             android:text="@string/COMPLETE_JOB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/CompleteWalk"
             android:layout_alignBottom="@+id/CancelRequest"
             android:layout_marginBottom="15dp"
             android:layout_weight="0.58" />
 
-        <Button
+        <Button android:id="@+id/CancelWalk"
+            style="@style/negative_Button"
             android:text="@string/CANCEL_JOB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
-            android:id="@+id/CancelWalk"></Button>
+            />
     </LinearLayout>
 
     <TextView

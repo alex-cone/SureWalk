@@ -33,13 +33,12 @@
             android:textSize="13dp" />
         <Button
             android:id="@+id/btnViewRequest"
+            style="@style/UT_Button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dip"
             android:text="@string/view_request"
-            android:textAllCaps="false"
-            android:textColor="@color/login_screen_text"
-            android:textSize="15dp" />
+            android:textAllCaps="false" />
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="fill_parent"

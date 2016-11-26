@@ -40,13 +40,13 @@ public class Requester {
     }
 
 
-    public Request newRequest(/*LatLng currLoc, LatLng dest*/ double currLocLat, double currLocLong,
-                              double destinationLocLat, double destinationLocLong) {
+    public Request newRequest(double currLocLat, double currLocLong,
+                              double destinationLocLat, double destinationLocLong, String comments) {
         DatabaseReference requestDatabase = FirebaseVariables.getDatabaseReference().child("Requests");
-        final DatabaseReference requestReference = requestDatabase.push();
+        DatabaseReference requestReference = requestDatabase.push();
 
         Request newRequest = new Request();
-        newRequest.setRequest(null, this, currLocLat, currLocLong, destinationLocLat, destinationLocLong, requestReference.getKey());
+        newRequest.setRequest(null, this, currLocLat, currLocLong, destinationLocLat, destinationLocLong, requestReference.getKey(), comments);
 
         requestReference.setValue(newRequest);
 
@@ -54,22 +54,18 @@ public class Requester {
         return newRequest;
     }
 
-    public void cancelRequest(final DatabaseReference requestReference) {
-        requestReference.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Request request = dataSnapshot.getValue(Request.class);
-                        request.setStatus(Request.STATUS.CANCELED);
-                        requestReference.setValue(request);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-
-
-
+    public void deleteRequest(Request currentRequest) {
+        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
+                .removeEventListener(FirebaseVariables.getRequesterEventListener());
+    }
+    public void cancelRequest(Request currentRequest) {
+        if(currentRequest.getStatus() == Request.STATUS.SUBMITTED){
+            deleteRequest(currentRequest);
+        }
+        else {
+            currentRequest.setStatus(Request.STATUS.CANCELED);
+            FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
+                    .setValue(currentRequest);
+        }
     }
 }

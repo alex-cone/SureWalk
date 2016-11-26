@@ -109,9 +109,7 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
-                        //TODO: Walker should delete
-                        currentRequest.setStatus(Request.STATUS.CANCELED);
-                        FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).setValue(currentRequest);
+                        FirebaseVariables.getCurrentRequester().cancelRequest(currentRequest);
                         startActivity(option);
                         finish();
                         break;
@@ -124,7 +122,7 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+        builder.setMessage("Cancel Request?").setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
     }
 }

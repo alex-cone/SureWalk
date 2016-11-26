@@ -34,9 +34,6 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
     private Button btnCompleteWalk;
     private String requesterPhoneNumber;
     private Users.Request currentRequest;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorage;
     private String requestKey;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +96,8 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
         btnCompleteWalk.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                currentRequest.setStatus(Request.STATUS.COMPLETED);
                 Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
-                yesOrNoConfirmation(intent, 1);
+                yesOrNoConfirmation(intent, 1, "Complete Walk?");
             }
         });
 
@@ -109,11 +105,11 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
-                yesOrNoConfirmation(intent, 0);
+                yesOrNoConfirmation(intent, 0, "Cancel Walk?");
             }
         });
     }
-    public void yesOrNoConfirmation(final Intent option, final int status){
+    public void yesOrNoConfirmation(final Intent option, final int status, String message){
 
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -139,7 +135,7 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+        builder.setMessage(message).setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
     }
 }

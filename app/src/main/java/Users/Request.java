@@ -9,8 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class Request {
     Walker walker;
     Requester requester;
-    //LatLng currentLocationRequest;
-    //LatLng destinationRequest;
+    String comments;
     double currentLatitude;
     double currentLongitude;
     double destinationLatitude;
@@ -35,6 +34,7 @@ public class Request {
         currentLongitude = Double.NaN;
         destinationLatitude = Double.NaN;
         destinationLongitude = Double.NaN;
+        this.comments = null;
 
         this.viewIndex = -1;
     }
@@ -44,17 +44,17 @@ public class Request {
     }
 
     public void setRequest(Walker walker, Requester requester, double currLocLat,
-                           double currLocLong, double destinationLocLat, double destinationLocLong, String firebaseId){
+                           double currLocLong, double destinationLocLat, double destinationLocLong, String firebaseId,
+                           String comments){
         this.walker = walker;
         this.requester = requester;
-        //this.currentLocationRequest = currLoc;
-        //this.destinationRequest = dest;
         currentLatitude = currLocLat;
         currentLongitude = currLocLong;
         destinationLatitude = destinationLocLat;
         destinationLongitude = destinationLocLong;
         this.status = STATUS.SUBMITTED;
         this.firebaseId = firebaseId;
+        this.comments = comments;
     }
 
     public void setIndex(int id){
@@ -73,15 +73,6 @@ public class Request {
         return this.requester;
     }
 
-    /*
-    public Lat getCurrentLocationRequest(){
-        return this.currentLocationRequest;
-    }
-
-    public LatLng getDestinationRequest(){
-        return this.destinationRequest;
-    }*/
-
     public double getCurrentLatitude() {
         return currentLatitude;
     }
@@ -96,6 +87,10 @@ public class Request {
 
     public double getDestinationLongitude() {
         return destinationLongitude;
+    }
+
+    public String getComments() {
+        return comments;
     }
 
     public STATUS getStatus(){

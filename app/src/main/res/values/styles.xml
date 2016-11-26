@@ -25,4 +25,12 @@
 
     </style>
 
+    <style name="UT_Button">
+        <item name ="android:background">#CF5300</item>
+        <item name ="android:textColor">#FFFFFF</item>
+    </style>
+    <style name="negative_Button">
+        <item name="android:background">#E0E0E0</item>
+    </style>
+
 </resources>

@@ -4,18 +4,22 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -72,9 +76,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
     private Request currentRequest;
 
+
     //The current and destination location data. To send to requester object to make a request
     private Location currentLocData;
     private Address destinationLocData;
+    private ProgressDialog pDialog;
 
 
     @Override
@@ -85,6 +91,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // Progress dialog
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
 
         //Location Services
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -99,7 +109,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
         final EditText address1 = (EditText) findViewById(R.id.addressLine1);
         final EditText address2 = (EditText) findViewById(R.id.addressLine2);
-        final EditText comments = (EditText) findViewById(R.id.comments);
+        final EditText commentsText = (EditText) findViewById(R.id.comments);
 
         final Button requestButton = (Button) findViewById(R.id.requestWalkerButton);
         //Button's original state is 1
@@ -110,6 +120,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 //Original state
                 if (state == 1) {
                     String address = address1.getText().toString() + " " + address2.getText().toString();
+                    String comments = commentsText.getText().toString();
+                    if(comments.equals("Additional Information/Comments")){
+                        comments = "None";
+                    }
                     Address destAddress = getLocationFromAddress(address);
                     destinationLocData = destAddress;
 
@@ -119,8 +133,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         requestButton.setText("CANCEL");
                         disableText(address1);
                         disableText(address2);
-                        disableText(comments);
+                        disableText(commentsText);
                         v.setTag(0);
+                        pDialog.setMessage("Request Sent...");
+                        showDialog();
 
                         LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
                         destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination")
@@ -130,17 +146,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         //Send the request
                         if(FirebaseVariables.getCurrentRequester() != null) {
                             currentRequest = FirebaseVariables.getCurrentRequester().newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
-                                    destinationLocData.getLatitude(), destinationLocData.getLongitude());
+                                    destinationLocData.getLatitude(), destinationLocData.getLongitude(), comments);
                             setUpRequestListener(currentRequest);
 
                         }
                     }
-                    /*
-                    //Send the request
-                    if(currentRequester != null) {
-                        currentRequest = currentRequester.newRequest(currentLocData, destinationLocData, RequesterRequestScreen.this);
-                        //Location can't be found
-                    }*/
                     else {
                         Toast.makeText(getApplicationContext(), "Can't find destination", Toast.LENGTH_SHORT).show();
                     }
@@ -148,14 +158,15 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 //Else in the requesting state
                 else {
                     //Reenable all the text fields
+                    hideDialog();
                     requestButton.setText("REQUEST WALKER");
                     enableText(address1, false);
                     enableText(address2, false);
-                    enableText(comments, true);
+                    enableText(commentsText, true);
                     v.setTag(1);
 
                     //Cancel the request
-                      //currentRequester.cancelRequest(currentRequest);
+                    FirebaseVariables.getCurrentRequester().cancelRequest(currentRequest);
 
                     destinationMarker.remove();
                 }
@@ -279,6 +290,16 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         }
     }
 
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         currentLocationMarker.remove();
@@ -303,52 +324,82 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     }
 
     private void setUpRequestListener(final Request requestToWatch){
+        FirebaseVariables.setRequesterEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Request currentRequest = dataSnapshot.getValue(Request.class);
+                if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
+                    hideDialog();
+                    Log.d("SureWalk","Request has been accepted");
 
-        FirebaseVariables.getDatabaseReference().child("Requests").child(requestToWatch.getFirebaseId()).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Request currentRequest = dataSnapshot.getValue(Request.class);
-                        if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
-                            Log.d("SureWalk","Request has been accepted");
+                    //Notify Requester - Request has been accepted
+                    Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
+                    accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                    startActivity(accepted);
 
-                            //Notify Requester - Request has been accepted
-                            Intent accepted = new Intent(RequesterRequestScreen.this, RequesterCurrentlyWalkingScreen.class);
-                            accepted.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
-                            startActivity(accepted);
+                    PendingIntent pIntent = PendingIntent.getActivity(RequesterRequestScreen.this,0,accepted,0);
+                    Notification notification = new Notification.Builder(RequesterRequestScreen.this)
+                            .setTicker("TickerTitle")
+                            .setContentTitle("SureWalk")
+                            .setContentText("Your request has been accepted!")
+                            .setSmallIcon(R.drawable.sure_walk_logo)
+                            .setContentIntent(pIntent).getNotification();
 
-                            PendingIntent pIntent = PendingIntent.getActivity(RequesterRequestScreen.this,0,accepted,0);
-                            Notification notification = new Notification.Builder(RequesterRequestScreen.this)
-                                    .setTicker("TickerTitle")
-                                    .setContentTitle("SureWalk")
-                                    .setContentText("Your request has been accepted!")
-                                    .setSmallIcon(R.drawable.sure_walk_logo)
-                                    .setContentIntent(pIntent).getNotification();
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                    NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                    nm.notify(0,notification);
 
-                            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                            NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-                            nm.notify(0,notification);
+                    finish();
+                }
+                else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
+                    Intent completed = new Intent(RequesterRequestScreen.this, FeedbackActivity.class);
+                    completed.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
+                    startActivity(completed);
+                    finish();
+                }
+                else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
+                    cancelHandling();
+                }
+            }
 
-                            finish();
-                        }
-                        else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-                            Intent completed = new Intent(RequesterRequestScreen.this, FeedbackActivity.class);
-                            completed.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
-                            startActivity(completed);
-                            finish();
-                        }
-                        else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-                            Log.d("SureWalk", "Request has been cancelled");
-                        }
-                    }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Getting Post failed, log a message
-                        Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                        // ...
-                    }
-                });
+        FirebaseVariables.getDatabaseReference().child("Requests").child(requestToWatch.getFirebaseId())
+                .addValueEventListener(FirebaseVariables.getRequesterEventListener());
+
     }
+    public void cancelHandling(){
 
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String phoneNumber = currentRequest.getWalker().phoneNumber;
+                FirebaseVariables.getCurrentRequester().deleteRequest(currentRequest);
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //TODO: Make sure this works
+                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+                        phoneIntent.setData(Uri.parse("tel:"+ phoneNumber));
+                        startActivity(phoneIntent);
+                        finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        Intent intent = new Intent(RequesterRequestScreen.this, RequesterHomeScreen.class);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Walker Cancelled Request.\nCall Walker?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+    }
 }

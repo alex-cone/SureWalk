@@ -47,20 +47,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
+    <Button android:id="@+id/CancelRequest"
+        style="@style/negative_Button"
         android:text="@string/CANCEL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/CancelRequest"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
+    <TextView android:id="@+id/WalkerName"
         android:text="@string/YourWalker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/WalkerName"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         android:textAlignment="center"

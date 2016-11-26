@@ -36,7 +36,8 @@
             />
 
         <Button android:id="@+id/btnBackToHome"
-            android:background="@color/input_register"
+            style="@style/negative_Button"
+            android:layout_marginTop="10dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/return_to_home"

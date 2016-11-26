@@ -25,12 +25,6 @@
                 android:layout_marginLeft="10dip"/>
             <!-- Logo Ends -->
         </LinearLayout>
-        <!--  Header End
-                <-  Header Ends -->
-
-        <!-- Footer Start -->
-
-        <!-- Footer Ends -->
 
         <!-- Login Form -->
         <LinearLayout
@@ -64,6 +58,7 @@
                 android:password="true"/>
             <!-- Login button -->
             <Button android:id="@+id/btnLogin"
+                style="@style/UT_Button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
