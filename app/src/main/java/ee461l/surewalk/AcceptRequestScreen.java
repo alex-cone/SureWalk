@@ -121,6 +121,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                                 .load(profilePicutreRef)
                                 .into(profilePicture);
 
+
                         //Show location on map
                         LatLng requesterLoc = new LatLng(currentRequest.getCurrentLatitude(), currentRequest.getCurrentLongitude());
                         LatLng destinationLoc = new LatLng(currentRequest.getDestinationLatitude(), currentRequest.getDestinationLongitude());
