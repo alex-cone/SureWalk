@@ -42,7 +42,7 @@
             <!-- Full Name Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:text="Full Name"/>
             <EditText android:id="@+id/reg_fullname"
                 android:layout_width="fill_parent"
@@ -53,7 +53,7 @@
             <!--  Email Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:text="Email"/>
             <EditText android:id="@+id/reg_email"
                 android:layout_width="fill_parent"
@@ -64,7 +64,7 @@
             <!--  Phonenumber Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:text="Phone Number"/>
             <EditText
                 android:id="@+id/editTextId"
@@ -78,7 +78,7 @@
             <!-- Password Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#372c24"
+                android:textColor="@color/blackTxt"
                 android:text="Password"/>
             <EditText android:id="@+id/reg_password"
                 android:layout_width="fill_parent"
@@ -89,7 +89,7 @@
                 android:layout_marginBottom="20dip"/>
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#372c24"
+                android:textColor="@color/blackTxt"
                 android:text="Confirm Password"/>
             <EditText android:id="@+id/confirm_password"
                 android:layout_width="fill_parent"
@@ -113,7 +113,7 @@
                 android:background="@null"
                 android:text="@string/btn_link_to_login"
                 android:textAllCaps="false"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:textSize="15dp" />
 
         </LinearLayout>

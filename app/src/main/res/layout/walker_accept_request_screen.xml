@@ -52,7 +52,7 @@
         <TextView android:id="@+id/txtName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/login_screen_text"
+            android:textColor="@color/blackTxt"
             android:text="Name"
             android:textSize="30dip"
             android:layout_marginBottom="30dip"/>
@@ -61,7 +61,7 @@
         <TextView android:id="@+id/txtComments"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/login_screen_text"
+            android:textColor="@color/blackTxt"
             android:text="Comments:"
             android:textSize="30dip"
             android:layout_marginBottom="30dip"/>
@@ -69,7 +69,7 @@
         <!--  Trip Label -->
         <TextView android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/login_screen_text"
+            android:textColor="@color/blackTxt"
             android:text="Trip Details"
             android:textSize="30dip"
             android:layout_marginBottom="30dip"/>

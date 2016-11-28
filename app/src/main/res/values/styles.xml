@@ -20,7 +20,7 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="View_Requests_Text">
-        <item name= "android:textColor">@color/login_screen_text</item>
+        <item name= "android:textColor">@color/blackTxt</item>
         <item name="android:textSize">30dip</item>
         <item name="android:layout_marginBottom">30dip</item>
 

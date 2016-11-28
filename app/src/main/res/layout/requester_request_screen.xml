@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Address"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000"
+        android:textColor="@color/blackTxt"
         android:id="@+id/titleAddress"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="15dp" />
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Comments"
-        android:textColor="#000000"
+        android:textColor="@color/blackTxt"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="5dp" />
 

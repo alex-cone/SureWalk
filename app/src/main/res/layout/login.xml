@@ -37,7 +37,7 @@
             <!--  Email Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:text="Email"/>
             <EditText android:id="@+id/email"
                 android:layout_width="fill_parent"
@@ -48,7 +48,7 @@
             <!--  Password Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:text="Password"/>
             <EditText android:id="@+id/password"
                 android:layout_width="fill_parent"
@@ -72,7 +72,7 @@
                 android:background="@null"
                 android:text="@string/btn_link_to_register"
                 android:textAllCaps="false"
-                android:textColor="@color/login_screen_text"
+                android:textColor="@color/blackTxt"
                 android:textSize="15dp" />
         </LinearLayout>
         <!-- Login Form Ends -->

@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textSize="24dp"
+            android:textColor="@color/blackTxt"
             android:layout_gravity="center_horizontal"/>
         <Button
             android:id="@+id/btnRequest"
