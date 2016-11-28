@@ -1,7 +1,22 @@
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/burntOrange"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -11,6 +26,7 @@
         android:layout_marginRight="20dp"
         android:gravity="center"
         android:orientation="vertical" >
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,16 +57,7 @@
             android:textAllCaps="false"
             android:textSize="15dp" />
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dip"
-            android:background="@color/btn_logut_bg"
-            android:text="@string/btn_logout"
-            android:textAllCaps="false"
-            android:textColor="@color/login_screen_text"
-            android:textSize="15dp" />
+
     </LinearLayout>
 
 </RelativeLayout>
