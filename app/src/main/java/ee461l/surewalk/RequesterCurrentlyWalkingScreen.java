@@ -80,15 +80,6 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.walker_currently_walking_screen);
-        
-        ArrayList<String> textPermission = new ArrayList<String>();
-        textPermission.add("android.permission.SEND_SMS");
-        askForPermission(textPermission);
-        ArrayList<String> phonePermission = new ArrayList<String>();
-        phonePermission.add("android.permission.READ_PHONE_STATE");
-        askForPermission(phonePermission);
 
         profilePicture = (ImageView) findViewById(R.id.RequesterPicture);
         txtName = (TextView) findViewById(R.id.WalkerName);
@@ -274,31 +265,5 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         //currentLocationMarker.remove();
         //handleNewLocation(location);
-    }
-
-    private void askForPermission(ArrayList<String> permissionList) {
-        int requestCode = 0;
-        String permission = "";
-        //permissionList.add("android.permission.INTERNET");
-        for (int i = 0; i < permissionList.size(); i++) {
-            permission = permissionList.get(i);
-            requestCode = i;
-            if (ContextCompat.checkSelfPermission(RequesterCurrentlyWalkingScreen.this, permission) != PackageManager.PERMISSION_GRANTED) {
-
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(RequesterCurrentlyWalkingScreen.this, permission)) {
-
-                    //This is called if user has denied the permission before
-                    //In this case I am just asking the permission again
-                    ActivityCompat.requestPermissions(RequesterCurrentlyWalkingScreen.this, new String[]{permission}, requestCode);
-
-                } else {
-
-                    ActivityCompat.requestPermissions(RequesterCurrentlyWalkingScreen.this, new String[]{permission}, requestCode);
-                }
-            } else {
-                // Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }
