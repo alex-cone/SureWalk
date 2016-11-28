@@ -55,17 +55,20 @@ public class Requester {
     }
 
     public void deleteRequest(Request currentRequest) {
+        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId()).removeValue();
+    }
+
+    public void cancelRequest(Request currentRequest) {
         FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
                 .removeEventListener(FirebaseVariables.getRequesterEventListener());
-    }
-    public void cancelRequest(Request currentRequest) {
-        if(currentRequest.getStatus() == Request.STATUS.SUBMITTED){
+        if(currentRequest.getStatus() != Request.STATUS.SUBMITTED){
             deleteRequest(currentRequest);
         }
-        else {
+        else{
             currentRequest.setStatus(Request.STATUS.CANCELED);
             FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
                     .setValue(currentRequest);
         }
     }
 }
+

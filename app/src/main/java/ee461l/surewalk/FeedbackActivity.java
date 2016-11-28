@@ -45,7 +45,7 @@ public class FeedbackActivity extends AppCompatActivity {
                             + "Surewalker: " + currentRequest.getWalker().username +"\n\n"
                             + "Message:\n" + feedbackMessage;
                     new SendMailTask(FeedbackActivity.this).execute(fromEmail, fromPassword, toEmailList, emailSubject, emailBody);
-                    FirebaseVariables.getDatabaseReference().child(currentRequest.getFirebaseId()).removeValue();
+                    FirebaseVariables.getCurrentRequester().deleteRequest(currentRequest);
                     Intent intent = new Intent(FeedbackActivity.this, RequesterHomeScreen.class);
                     startActivity(intent);
                     Log.i("test","succeed");
