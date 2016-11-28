@@ -111,7 +111,7 @@ public class RequesterCurrentlyWalkingScreen extends AppCompatActivity {
                         //Yes button clicked
                         FirebaseVariables.getCurrentRequester().cancelRequest(currentRequest);
                         startActivity(option);
-                        finish();
+                     //    finish();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
