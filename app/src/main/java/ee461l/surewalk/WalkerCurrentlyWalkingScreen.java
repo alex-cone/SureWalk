@@ -88,7 +88,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
         askForPermission(phonePermission);
 
         profilePicture = (ImageView) findViewById(R.id.RequesterPicture);
-        //txtName = (TextView) findViewById(R.id.WalkerName);
+        txtName = (TextView) findViewById(R.id.WalkerName);
         btnCallRequester = (Button) findViewById(R.id.CallRequester);
         btnMessageRequester = (Button) findViewById(R.id.TextRequeseter);
         btnCancelWalk = (Button) findViewById(R.id.CancelWalk);
@@ -96,7 +96,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
         Bundle extras = getIntent().getExtras();
         currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
 
-        //txtName.setText("You are on your way to " + currentRequest.getRequester().username);
+        txtName.setText("Walking to " + currentRequest.getRequester().username);
         requesterPhoneNumber = currentRequest.getRequester().phoneNumber;
         requestKey = extras.getString("RequestKey");
         FirebaseVariables.getDatabaseReference().child("Requests").addListenerForSingleValueEvent(

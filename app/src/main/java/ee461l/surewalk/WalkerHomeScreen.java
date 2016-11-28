@@ -37,10 +37,7 @@ import Users.Walker;
 public class WalkerHomeScreen extends AppCompatActivity {
 
     private TextView txtName;
-    private TextView txtEmail;
-    private Button btnLogout;
     private Button btnViewRequests;
-    private String requestKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,27 +63,9 @@ public class WalkerHomeScreen extends AppCompatActivity {
 
 
         txtName = (TextView) findViewById(R.id.name);
-        txtEmail = (TextView) findViewById(R.id.email);
         btnViewRequests = (Button) findViewById(R.id.btnViewRequest);
+        txtName.setText("Welcome " + FirebaseVariables.getCurrentWalker().username + "!");
 
-
-        FirebaseVariables.getDatabaseReference().child("Walkers").child(user.getUid()).addListenerForSingleValueEvent(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // Get user value
-                            Walker walker = dataSnapshot.getValue(Walker.class);
-                            txtName.setText(walker.username);
-                            //user.email now has your email value
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // Getting Post failed, log a message
-                            Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                            // ...
-                        }
-                    });
         FirebaseVariables.getDatabaseReference().child("Requests").addChildEventListener(
                 new ChildEventListener() {
                     @Override
