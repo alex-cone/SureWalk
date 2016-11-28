@@ -18,11 +18,10 @@
             android:paddingBottom="5dip">
             <!-- Logo Start-->
             <ImageButton android:id="@+id/uploadProfilePicture"
-                android:src="@drawable/sure_walk_logo"
+                android:src="@drawable/upload_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dip"
-
                 android:background="#0000"/>
 
             <!-- Logo Ends -->
