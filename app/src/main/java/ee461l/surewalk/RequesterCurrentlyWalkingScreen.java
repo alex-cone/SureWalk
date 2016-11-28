@@ -167,6 +167,8 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
 
                     case DialogInterface.BUTTON_NEGATIVE:
                         if(status == 1){
+                            FirebaseVariables.getCurrentRequester().removeEventHandler(currentRequest);
+                            FirebaseVariables.getCurrentRequester().deleteRequest(currentRequest);
                             Intent intent = new Intent(RequesterCurrentlyWalkingScreen.this, RequesterHomeScreen.class);
                             startActivity(intent);
                         }

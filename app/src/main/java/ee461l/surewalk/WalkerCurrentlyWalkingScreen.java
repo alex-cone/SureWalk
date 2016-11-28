@@ -178,7 +178,9 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        if (status == 3) {
+                        if (status == 2) {
+                            FirebaseVariables.getCurrentWalker().removeEventHandler(currentRequest);
+                            FirebaseVariables.getCurrentWalker().deleteRequest(currentRequest);
                             Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
                             startActivity(intent);
                         }
