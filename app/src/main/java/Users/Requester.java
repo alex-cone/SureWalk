@@ -61,7 +61,7 @@ public class Requester {
     public void cancelRequest(Request currentRequest) {
         FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
                 .removeEventListener(FirebaseVariables.getRequesterEventListener());
-        if(currentRequest.getStatus() != Request.STATUS.SUBMITTED){
+        if(currentRequest.getStatus() == Request.STATUS.SUBMITTED){
             deleteRequest(currentRequest);
         }
         else{

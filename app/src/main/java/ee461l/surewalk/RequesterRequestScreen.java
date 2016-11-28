@@ -1,6 +1,5 @@
 package ee461l.surewalk;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -40,10 +39,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
@@ -51,8 +48,6 @@ import java.util.List;
 import java.util.Locale;
 
 import Users.Request;
-import Users.Requester;
-import Users.Walker;
 
 public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -75,6 +70,10 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private Marker currentLocationMarker;
 
     private Request currentRequest;
+    private  Button requestButton;
+    private EditText address1;
+    private EditText address2;
+    private EditText commentsText;
 
 
     //The current and destination location data. To send to requester object to make a request
@@ -95,6 +94,21 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
+        pDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel Request", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Reenable all the text fields
+                hideDialog();
+                requestButton.setText("REQUEST WALKER");
+                enableText(address1, false);
+                enableText(address2, false);
+                enableText(commentsText, true);
+
+                //Cancel the request
+                FirebaseVariables.getCurrentRequester().cancelRequest(currentRequest);
+                destinationMarker.remove();
+            }
+        });
 
         //Location Services
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -107,19 +121,21 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-        final EditText address1 = (EditText) findViewById(R.id.addressLine1);
-        final EditText address2 = (EditText) findViewById(R.id.addressLine2);
-        final EditText commentsText = (EditText) findViewById(R.id.comments);
+        address1 = (EditText) findViewById(R.id.addressLine1);
+        address2 = (EditText) findViewById(R.id.addressLine2);
+        commentsText = (EditText) findViewById(R.id.comments);
 
-        final Button requestButton = (Button) findViewById(R.id.requestWalkerButton);
+        requestButton = (Button) findViewById(R.id.requestWalkerButton);
         //Button's original state is 1
         requestButton.setTag(1);
         requestButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                int state = (Integer) requestButton.getTag();
-                //Original state
-                if (state == 1) {
-                    String address = address1.getText().toString() + " " + address2.getText().toString();
+                //Original state\
+                    String address1Text = address1.getText().toString();
+                    String address2Text = address2.getText().toString();
+                    if(address1Text.equals("Address Line 1")){ address1Text = "";}
+                    if(address2Text.equals("Address Line 2")){ address2Text = "";}
+                    String address = address1Text + " " + address2Text;
                     String comments = commentsText.getText().toString();
                     if(comments.equals("Additional Information/Comments")){
                         comments = "None";
@@ -128,13 +144,11 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     destinationLocData = destAddress;
 
                     //Geocoder can find the location specified
-                    if(destAddress != null) {
+                    if(destAddress != null || !address.equals(" ") ){
                         //Disable all text fields so you cant change while requesting
-                        requestButton.setText("CANCEL");
                         disableText(address1);
                         disableText(address2);
                         disableText(commentsText);
-                        v.setTag(0);
                         pDialog.setMessage("Request Sent...");
                         showDialog();
 
@@ -155,22 +169,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         Toast.makeText(getApplicationContext(), "Can't find destination", Toast.LENGTH_SHORT).show();
                     }
                 }
-                //Else in the requesting state
-                else {
-                    //Reenable all the text fields
-                    hideDialog();
-                    requestButton.setText("REQUEST WALKER");
-                    enableText(address1, false);
-                    enableText(address2, false);
-                    enableText(commentsText, true);
-                    v.setTag(1);
 
-                    //Cancel the request
-                    FirebaseVariables.getCurrentRequester().cancelRequest(currentRequest);
-
-                    destinationMarker.remove();
-                }
-            }
         });
     }
 
@@ -291,8 +290,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     }
 
     private void showDialog() {
-        if (!pDialog.isShowing())
+        if (!pDialog.isShowing()) {
             pDialog.show();
+        }
     }
 
     private void hideDialog() {
