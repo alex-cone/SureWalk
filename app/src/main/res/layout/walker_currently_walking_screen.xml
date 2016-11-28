@@ -11,12 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ee461l.surewalk.RequesterCurrentlyWalkingScreen">
 
-    <!--<ImageView
-        android:layout_height="300dp"
-        app:srcCompat="@drawable/sure_walk_logo"
-        android:id="@+id/MapTemp"
-        android:layout_width="match_parent"
-        android:layout_alignParentTop="true" />-->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -26,7 +20,7 @@
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:map="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/map"
+            android:id="@+id/WalkerCurrentlyWalkingMap"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             tools:context=".WalkerCurrentlyWalkingScreen"
