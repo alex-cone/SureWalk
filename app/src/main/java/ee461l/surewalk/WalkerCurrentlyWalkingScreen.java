@@ -67,6 +67,8 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.walker_currently_walking_screen);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.WalkerCurrentlyWalkingMap);
         mapFragment.getMapAsync(this);
@@ -79,8 +81,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.walker_currently_walking_screen);
+
 
         profilePicture = (ImageView) findViewById(R.id.RequesterPicture);
         txtName = (TextView) findViewById(R.id.WalkerName);
@@ -91,7 +92,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
         Bundle extras = getIntent().getExtras();
         currentRequest = new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
         setUpRequestListener();
-        txtName.setText("Walking to " + currentRequest.getRequester().username);
+        txtName.setText(currentRequest.getRequester().username);
         requesterPhoneNumber = currentRequest.getRequester().phoneNumber;
         requestKey = extras.getString("RequestKey");
         FirebaseVariables.getDatabaseReference().child("Requests").addListenerForSingleValueEvent(
