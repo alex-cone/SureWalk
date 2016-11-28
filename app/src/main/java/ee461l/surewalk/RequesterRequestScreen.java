@@ -136,7 +136,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         disableText(commentsText);
                         v.setTag(0);
                         pDialog.setMessage("Request Sent...");
-                        showDialog();
+                        //showDialog();
 
                         LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
                         destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination")
