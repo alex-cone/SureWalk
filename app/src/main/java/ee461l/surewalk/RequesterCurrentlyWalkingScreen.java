@@ -139,13 +139,13 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RequesterCurrentlyWalkingScreen.this, RequesterHomeScreen.class);
-                yesOrNoConfirmation(intent, 0);
+                yesOrNoConfirmation(intent, "Cancel Request?", 0);
             }
         });
 
     }
 
-    public void yesOrNoConfirmation(final Intent option, final int status) {
+    public void yesOrNoConfirmation(final Intent option, String message, final int status) {
 
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -176,7 +176,7 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Cancel Request?").setPositiveButton("Yes", dialogClickListener)
+        builder.setMessage(message).setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
@@ -291,7 +291,7 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
                     finish();
                 }
                 else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-                   yesOrNoConfirmation(null, 1);
+                   yesOrNoConfirmation(null, "Walker Canceled\nCall Walker?", 1);
                 }
             }
 
