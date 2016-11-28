@@ -19,10 +19,13 @@ public class Walker {
     public void deleteRequest(Request currentRequest) {
         FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId()).removeValue();
     }
+    public void removeEventHandler(Request currentRequest){
+        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
+                .removeEventListener(FirebaseVariables.getWalkerEventListener());
+    }
 
     public void cancelRequest(Request currentRequest) {
-        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
-                .removeEventListener(FirebaseVariables.getRequesterEventListener());
+        removeEventHandler(currentRequest);
         currentRequest.setStatus(Request.STATUS.CANCELED);
         FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
                     .setValue(currentRequest);

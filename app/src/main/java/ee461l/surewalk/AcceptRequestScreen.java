@@ -153,7 +153,6 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                     Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
                     intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                     intent.putExtra("RequestKey",requestKey);
-                    setUpRequestListener(currentRequest);
                     startActivity(intent);
                     finish();
                 }
@@ -265,54 +264,5 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
     public void onLocationChanged(Location location) {
         //currentLocationMarker.remove();
         //handleNewLocation(location);
-    }
-    private void setUpRequestListener(final Request requestToWatch){
-        FirebaseVariables.setWalkerEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Request currentRequest = dataSnapshot.getValue(Request.class);
-                if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-                    cancelHandling();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        });
-
-        FirebaseVariables.getDatabaseReference().child("Requests").child(requestToWatch.getFirebaseId())
-                .addValueEventListener(FirebaseVariables.getWalkerEventListener());
-
-    }
-    public void cancelHandling(){
-
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String phoneNumber = currentRequest.getRequester().phoneNumber;
-                FirebaseVariables.getCurrentWalker().deleteRequest(currentRequest);
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                        phoneIntent.setData(Uri.parse("tel:"+ phoneNumber));
-                        startActivity(phoneIntent);
-                        finish();
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        Intent intent = new Intent(AcceptRequestScreen.this, WalkerHomeScreen.class);
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Requester Cancelled Request.\nCall Walker?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
     }
 }

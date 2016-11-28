@@ -36,14 +36,15 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/lbl_name"
-            android:textSize="24dp" />
+            android:textSize="24dp"
+            android:layout_gravity="center_horizontal"/>
         <Button
             android:id="@+id/btnRequest"
             style="@style/UT_Button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dip"
-            android:text="@string/view_request"
+            android:text="@string/btn_request"
             android:textAllCaps="false"
             android:layout_gravity="bottom"
             android:layout_alignParentBottom="true"/>

@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/lbl_name"
-            android:textSize="24dp" />
+            android:textSize="24dp"
+            android:layout_gravity="center_horizontal"/>
         <Button
             android:id="@+id/btnViewRequest"
             style="@style/UT_Button"

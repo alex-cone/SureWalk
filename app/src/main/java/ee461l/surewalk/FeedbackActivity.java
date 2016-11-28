@@ -27,6 +27,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         final Request currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
+        FirebaseVariables.getCurrentRequester().deleteRequest(currentRequest);
         Log.i("test", "test");
         //Feedback Submit Button Listener
         btnSubmit.setOnClickListener(new View.OnClickListener(){
@@ -45,10 +46,8 @@ public class FeedbackActivity extends AppCompatActivity {
                             + "Surewalker: " + currentRequest.getWalker().username +"\n\n"
                             + "Message:\n" + feedbackMessage;
                     new SendMailTask(FeedbackActivity.this).execute(fromEmail, fromPassword, toEmailList, emailSubject, emailBody);
-                    FirebaseVariables.getCurrentRequester().deleteRequest(currentRequest);
                     Intent intent = new Intent(FeedbackActivity.this, RequesterHomeScreen.class);
                     startActivity(intent);
-                    Log.i("test","succeed");
                     finish();
                 } catch (Exception e) {
                     Log.i("test", "failed");

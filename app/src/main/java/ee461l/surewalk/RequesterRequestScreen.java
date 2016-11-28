@@ -337,7 +337,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Request currentRequest = dataSnapshot.getValue(Request.class);
                 if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
-                    //hideDialog();
+                    hideDialog();
                     Log.d("SureWalk","Request has been accepted");
 
                     //Notify Requester - Request has been accepted
@@ -356,17 +356,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     notification.flags |= Notification.FLAG_AUTO_CANCEL;
                     NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                     nm.notify(0,notification);
-
                     finish();
-                }
-                else if(currentRequest.getStatus() == Request.STATUS.COMPLETED){
-                    Intent completed = new Intent(RequesterRequestScreen.this, FeedbackActivity.class);
-                    completed.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
-                    startActivity(completed);
-                    finish();
-                }
-                else if(currentRequest.getStatus() == Request.STATUS.CANCELED){
-                    cancelHandling();
                 }
             }
 
@@ -382,32 +372,6 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 .addValueEventListener(FirebaseVariables.getRequesterEventListener());
 
     }
-    public void cancelHandling(){
 
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String phoneNumber = currentRequest.getWalker().phoneNumber;
-                FirebaseVariables.getCurrentRequester().deleteRequest(currentRequest);
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        //TODO: Make sure this works
-                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                        phoneIntent.setData(Uri.parse("tel:"+ phoneNumber));
-                        startActivity(phoneIntent);
-                        finish();
-                        break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        Intent intent = new Intent(RequesterRequestScreen.this, RequesterHomeScreen.class);
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Walker Cancelled Request.\nCall Walker?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
-    }
 }

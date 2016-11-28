@@ -57,10 +57,13 @@ public class Requester {
     public void deleteRequest(Request currentRequest) {
         FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId()).removeValue();
     }
-
-    public void cancelRequest(Request currentRequest) {
+    public void removeEventHandler(Request currentRequest){
         FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
                 .removeEventListener(FirebaseVariables.getRequesterEventListener());
+    }
+
+    public void cancelRequest(Request currentRequest) {
+        removeEventHandler(currentRequest);
         if(currentRequest.getStatus() == Request.STATUS.SUBMITTED){
             deleteRequest(currentRequest);
         }

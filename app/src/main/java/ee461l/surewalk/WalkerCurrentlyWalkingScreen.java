@@ -61,6 +61,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,8 +87,8 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
         btnCancelWalk = (Button) findViewById(R.id.CancelWalk);
         btnCompleteWalk = (Button) findViewById(R.id.CompleteWalk);
         Bundle extras = getIntent().getExtras();
-        currentRequest =  new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
-
+        currentRequest = new Gson().fromJson(extras.getString("RequestInfo"), Users.Request.class);
+        setUpRequestListener();
         txtName.setText("Walking to " + currentRequest.getRequester().username);
         requesterPhoneNumber = currentRequest.getRequester().phoneNumber;
         requestKey = extras.getString("RequestKey");
@@ -119,7 +120,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
             @Override
             public void onClick(View v) {
                 Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                phoneIntent.setData(Uri.parse("tel:"+ requesterPhoneNumber));
+                phoneIntent.setData(Uri.parse("tel:" + requesterPhoneNumber));
                 startActivity(phoneIntent);
             }
         });
@@ -133,42 +134,51 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
             }
         });
 
-        btnCompleteWalk.setOnClickListener(new View.OnClickListener(){
+        btnCompleteWalk.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
                 yesOrNoConfirmation(intent, 1, "Complete Walk?");
             }
         });
 
-        btnCancelWalk.setOnClickListener(new View.OnClickListener(){
+        btnCancelWalk.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
                 yesOrNoConfirmation(intent, 0, "Cancel Walk?");
             }
         });
     }
-    public void yesOrNoConfirmation(final Intent option, final int status, String message){
+
+    public void yesOrNoConfirmation(final Intent option, final int status, String message) {
 
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){
+                switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
-                        if(status == 0) {
+                        if (status == 0) {
                             FirebaseVariables.getCurrentWalker().cancelRequest(currentRequest);
-                        }
-                        else if(status == 1){
+                        } else if (status == 1) {
+                            FirebaseVariables.getCurrentWalker().removeEventHandler(currentRequest);
                             currentRequest.setStatus(Request.STATUS.COMPLETED);
+                            FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId()).setValue(currentRequest);
+                        } else if (status == 2) {
+                            startActivity(cancelHandling());
+                            finish();
+                            break;
                         }
                         startActivity(option);
                         finish();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
+                        if (status == 3) {
+                            Intent intent = new Intent(WalkerCurrentlyWalkingScreen.this, WalkerHomeScreen.class);
+                            startActivity(intent);
+                        }
                         break;
                 }
             }
@@ -215,8 +225,7 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-        else {
+        } else {
             handleNewLocation(location);
         }
     }
@@ -277,5 +286,37 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
     public void onLocationChanged(Location location) {
         //currentLocationMarker.remove();
         //handleNewLocation(location);
+    }
+
+    private void setUpRequestListener() {
+        FirebaseVariables.setWalkerEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Request currentRequest = dataSnapshot.getValue(Request.class);
+                if (currentRequest.getStatus() == Request.STATUS.CANCELED) {
+                    yesOrNoConfirmation(null, 2, "Requester Cancelled Request.\nCall Requester?");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+        FirebaseVariables.getDatabaseReference().child("Requests").child(currentRequest.getFirebaseId())
+                .addValueEventListener(FirebaseVariables.getWalkerEventListener());
+
+    }
+
+    public Intent cancelHandling() {
+        String phoneNumber = currentRequest.getRequester().phoneNumber;
+        FirebaseVariables.getCurrentWalker().deleteRequest(currentRequest);
+        FirebaseVariables.getCurrentWalker().removeEventHandler(currentRequest);
+        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+        phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
+        return phoneIntent;
     }
 }

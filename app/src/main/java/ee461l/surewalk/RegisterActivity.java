@@ -203,7 +203,8 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             Log.d("SureWalk", snapshot.getValue().getClass().toString());
                             if(emailInDatabase.equals(emailToRegister)){
-                                String userId =  FirebaseVariables.getFireBaseAuth().getCurrentUser().getUid();
+                                FirebaseUser user = FirebaseVariables.getFireBaseAuth().getCurrentUser();
+                                String userId =  user.getUid();
                                 Walker walker = new Walker();
                                 walker.setWalker(usernameToRegister,emailToRegister, phoneNumberToRegister, userId);
 
@@ -212,6 +213,15 @@ public class RegisterActivity extends AppCompatActivity {
                                 FirebaseVariables.getDatabaseReference().child("Walkers").child(userId).setValue(walker);
                                 FirebaseVariables.setCurrentWalker(walker);
 
+
+                                //Save profile pic
+                                StorageReference photoFilePath = FirebaseVariables.getStorageReference().child("userProfilePictures").child(user.getUid()).child(uri.getLastPathSegment());
+                                photoFilePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                    }
+                                });
                                 Intent intent = new Intent(RegisterActivity.this, WalkerHomeScreen.class);
                                 startActivity(intent);
                                 finish();
