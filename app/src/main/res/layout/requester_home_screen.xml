@@ -38,7 +38,7 @@
             android:textColor="@color/lbl_name"
             android:textSize="24dp" />
         <Button
-            android:id="@+id/btnViewRequest"
+            android:id="@+id/btnRequest"
             style="@style/UT_Button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
