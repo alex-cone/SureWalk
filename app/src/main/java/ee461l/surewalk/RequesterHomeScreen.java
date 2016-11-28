@@ -30,8 +30,6 @@ import Users.Requester;
 public class RequesterHomeScreen extends AppCompatActivity {
 
     private TextView txtName;
-    private TextView txtEmail;
-    private Button btnLogout;
     private Button btnRequest;
 
     @Override
@@ -46,15 +44,16 @@ public class RequesterHomeScreen extends AppCompatActivity {
             finish();
         }
         else if (user.isEmailVerified()) {
+
             Log.d("SureWalk", "Email is verified");
         }
         else {
+            //TODO: For future, make login unsuccessful
             Log.d("SureWalk", "Email is not verified");
         }
 
 
         txtName = (TextView) findViewById(R.id.name);
-        txtEmail = (TextView) findViewById(R.id.email);
         btnRequest = (Button) findViewById(R.id.btnRequest);
 
            FirebaseVariables.getDatabaseReference().child("Requesters").child(user.getUid()).addListenerForSingleValueEvent(
@@ -63,7 +62,7 @@ public class RequesterHomeScreen extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         FirebaseVariables.setCurrentRequester(dataSnapshot.getValue(Requester.class));
-                        txtName.setText(FirebaseVariables.getCurrentRequester().username);
+                        txtName.setText("Welcome " + FirebaseVariables.getCurrentRequester().username + "!");
                    }
                     @Override
                   public void onCancelled(DatabaseError databaseError) {
