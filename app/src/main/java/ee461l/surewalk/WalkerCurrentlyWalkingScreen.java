@@ -2,7 +2,10 @@ package ee461l.surewalk;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +17,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,7 +34,7 @@ import com.google.gson.Gson;
 import Users.Request;
 import Users.Requester;
 
-public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
+public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements OnMapReadyCallback {
     private ImageView profilePicture;
     private TextView txtName;
     private Button btnCallRequester;
@@ -35,10 +44,16 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
     private String requesterPhoneNumber;
     private Users.Request currentRequest;
     private String requestKey;
+    private GoogleMap mMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.walker_currently_walking_screen);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.WalkerCurrentlyWalkingMap);
+        mapFragment.getMapAsync(this);
+
         profilePicture = (ImageView) findViewById(R.id.RequesterPicture);
         txtName = (TextView) findViewById(R.id.WalkerName);
         btnCallRequester = (Button) findViewById(R.id.CallRequester);
@@ -137,5 +152,25 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message).setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
+    }
+
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        LatLng requester = new LatLng(currentRequest.getCurrentLatitude(), currentRequest.getCurrentLongitude());
+        LatLng destination = new LatLng(currentRequest.getDestinationLatitude(), currentRequest.getDestinationLongitude());
+        mMap.addMarker(new MarkerOptions().position(requester));
+        mMap.addMarker(new MarkerOptions().position(destination).title("Destination")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
     }
 }
