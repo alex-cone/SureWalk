@@ -1,9 +1,11 @@
 package ee461l.surewalk;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import Users.Request;
 import Users.Requester;
 import Users.Walker;
@@ -37,7 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ArrayList<String> basicPermissions = new ArrayList<String>();
+        basicPermissions.add("android.permission.READ_EXTERNAL_STORAGE");
+        basicPermissions.add("android.permission.WRITE_EXTERNAL_STORAGE");
+        askForPermission(basicPermissions);
         /*Checks to see if user is logged in*/
         if(FirebaseVariables.getFireBaseAuth().getCurrentUser() != null){
            chooseLoginScreen();
@@ -182,5 +189,31 @@ public class LoginActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+    }
+
+    private void askForPermission(ArrayList<String> permissionList) {
+        int requestCode = 0;
+        String permission = "";
+        //permissionList.add("android.permission.INTERNET");
+        for (int i = 0; i < permissionList.size(); i++) {
+            permission = permissionList.get(i);
+            requestCode = i;
+            if (ContextCompat.checkSelfPermission(LoginActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this, permission)) {
+
+                    //This is called if user has denied the permission before
+                    //In this case I am just asking the permission again
+                    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{permission}, requestCode);
+
+                } else {
+
+                    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{permission}, requestCode);
+                }
+            } else {
+               // Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

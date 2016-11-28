@@ -9,7 +9,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +30,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import Users.Request;
 import Users.Walker;
 public class WalkerHomeScreen extends AppCompatActivity {
@@ -38,6 +43,10 @@ public class WalkerHomeScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.walker_home_screen);
+        ArrayList<String> locationPermission = new ArrayList<String>();
+        locationPermission.add("android.permission.ACCESS_FINE_LOCATION");
+        locationPermission.add("android.permission.ACCESS_COARSE_LOCATION");
+        askForPermission(locationPermission);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         FirebaseUser user = FirebaseVariables.getFireBaseAuth().getCurrentUser();
@@ -144,6 +153,32 @@ public class WalkerHomeScreen extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    private void askForPermission(ArrayList<String> permissionList) {
+        int requestCode = 0;
+        String permission = "";
+        //permissionList.add("android.permission.INTERNET");
+        for (int i = 0; i < permissionList.size(); i++) {
+            permission = permissionList.get(i);
+            requestCode = i;
+            if (ContextCompat.checkSelfPermission(WalkerHomeScreen.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(WalkerHomeScreen.this, permission)) {
+
+                    //This is called if user has denied the permission before
+                    //In this case I am just asking the permission again
+                    ActivityCompat.requestPermissions(WalkerHomeScreen.this, new String[]{permission}, requestCode);
+
+                } else {
+
+                    ActivityCompat.requestPermissions(WalkerHomeScreen.this, new String[]{permission}, requestCode);
+                }
+            } else {
+                // Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -5,7 +5,10 @@ package ee461l.surewalk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 import Users.Requester;
 
 public class RequesterHomeScreen extends AppCompatActivity {
@@ -36,6 +41,10 @@ public class RequesterHomeScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.requester_home_screen);
+        ArrayList<String> locationPermission = new ArrayList<String>();
+        locationPermission.add("android.permission.ACCESS_FINE_LOCATION");
+        locationPermission.add("android.permission.ACCESS_COARSE_LOCATION");
+        askForPermission(locationPermission);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         FirebaseUser user = FirebaseVariables.getFireBaseAuth().getCurrentUser();
@@ -116,6 +125,32 @@ public class RequesterHomeScreen extends AppCompatActivity {
             // Invoke the superclass to handle it.
             return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    private void askForPermission(ArrayList<String> permissionList) {
+        int requestCode = 0;
+        String permission = "";
+        //permissionList.add("android.permission.INTERNET");
+        for (int i = 0; i < permissionList.size(); i++) {
+            permission = permissionList.get(i);
+            requestCode = i;
+            if (ContextCompat.checkSelfPermission(RequesterHomeScreen.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(RequesterHomeScreen.this, permission)) {
+
+                    //This is called if user has denied the permission before
+                    //In this case I am just asking the permission again
+                    ActivityCompat.requestPermissions(RequesterHomeScreen.this, new String[]{permission}, requestCode);
+
+                } else {
+
+                    ActivityCompat.requestPermissions(RequesterHomeScreen.this, new String[]{permission}, requestCode);
+                }
+            } else {
+                // Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
