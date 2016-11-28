@@ -11,39 +11,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ee461l.surewalk.RequesterCurrentlyWalkingScreen">
 
-    <ImageView
-        android:layout_height="300dp"
-        app:srcCompat="@drawable/sure_walk_logo"
-        android:id="@+id/MapTemp"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_alignParentTop="true" />
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
-    <Button
-        android:id="@+id/TextRequeseter"
-        android:background="@android:drawable/sym_action_email"
-        android:elevation="0dp"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_alignTop="@+id/CallRequester"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        app:srcCompat="@drawable/profile"
-        android:id="@+id/RequesterPicture"
-        android:layout_below="@+id/MapTemp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:id="@+id/CallRequester"
-        android:background="@android:drawable/ic_menu_call"
-        android:layout_below="@+id/MapTemp"
-        android:layout_centerHorizontal="true" />
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/WalkerCurrentlyWalkingMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            tools:context=".WalkerCurrentlyWalkingScreen"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -53,7 +35,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:id="@+id/linearLayout">
 
         <Button android:id="@+id/CompleteWalk"
             style="@style/UT_Button"
@@ -73,7 +56,7 @@
             />
     </LinearLayout>
 
-    <TextView
+    <!--<TextView
         android:text="@string/YourWalker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,7 +67,37 @@
         android:layout_below="@+id/CallRequester"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/CallRequester"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="100dp"/>-->
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:srcCompat="@drawable/profile"
+        android:id="@+id/RequesterPicture"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="14dp"/>
+
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/CallRequester"
+        android:background="@android:drawable/ic_menu_call"
+        android:layout_above="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp" />
+
+    <Button
+        android:id="@+id/TextRequeseter"
+        android:background="@android:drawable/sym_action_email"
+        android:elevation="0dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="4dp" />
 
 
 </RelativeLayout>

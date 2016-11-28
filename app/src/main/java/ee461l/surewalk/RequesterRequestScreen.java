@@ -57,8 +57,7 @@ import Users.Walker;
 public class RequesterRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener
-{
+        LocationListener {
 
     //Location Services
     public static final String TAG = RequesterRequestScreen.class.getSimpleName();
@@ -72,7 +71,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private LocationRequest mLocationRequest;
 
     private Marker destinationMarker;
-    private Marker currentLocationMarker;
+    //private Marker currentLocationMarker;
 
     private Request currentRequest;
 
@@ -87,6 +86,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.requester_request_screen);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -121,14 +121,14 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                 if (state == 1) {
                     String address = address1.getText().toString() + " " + address2.getText().toString();
                     String comments = commentsText.getText().toString();
-                    if(comments.equals("Additional Information/Comments")){
+                    if (comments.equals("Additional Information/Comments")) {
                         comments = "None";
                     }
                     Address destAddress = getLocationFromAddress(address);
                     destinationLocData = destAddress;
 
                     //Geocoder can find the location specified
-                    if(destAddress != null) {
+                    if (destAddress != null) {
                         //Disable all text fields so you cant change while requesting
                         requestButton.setText("CANCEL");
                         disableText(address1);
@@ -136,7 +136,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         disableText(commentsText);
                         v.setTag(0);
                         pDialog.setMessage("Request Sent...");
-                        showDialog();
+                        //showDialog();
 
                         LatLng destLatLng = new LatLng(destAddress.getLatitude(), destAddress.getLongitude());
                         destinationMarker = mMap.addMarker(new MarkerOptions().position(destLatLng).title("Destination")
@@ -144,21 +144,20 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                         //destinationLocData = destLatLng; // set destination location data to the destination information
 
                         //Send the request
-                        if(FirebaseVariables.getCurrentRequester() != null) {
+                        if (FirebaseVariables.getCurrentRequester() != null) {
                             currentRequest = FirebaseVariables.getCurrentRequester().newRequest(currentLocData.getLatitude(), currentLocData.getLongitude(),
                                     destinationLocData.getLatitude(), destinationLocData.getLongitude(), comments);
                             setUpRequestListener(currentRequest);
 
                         }
-                    }
-                    else {
+                    } else {
                         Toast.makeText(getApplicationContext(), "Can't find destination", Toast.LENGTH_SHORT).show();
                     }
                 }
                 //Else in the requesting state
                 else {
                     //Reenable all the text fields
-                    hideDialog();
+                    //hideDialog();
                     requestButton.setText("REQUEST WALKER");
                     enableText(address1, false);
                     enableText(address2, false);
@@ -214,9 +213,21 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     //Location Services
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(TAG, "Location services connected.");
@@ -248,9 +259,9 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
 
         currentLocData = location; // Set the current location data to the current location
 
-        currentLocationMarker = mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("Current Location"));
+        //currentLocationMarker = mMap.addMarker(new MarkerOptions()
+         //       .position(latLng)
+        //        .title("Current Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
@@ -290,7 +301,13 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
         }
     }
 
-    private void showDialog() {
+    @Override
+    public void onLocationChanged(Location location) {
+        //currentLocationMarker.remove();
+        //handleNewLocation(location);
+    }
+
+    /*private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
     }
@@ -298,13 +315,8 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
-    }
+    }*/
 
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocationMarker.remove();
-        handleNewLocation(location);
-    }
 
     public Address getLocationFromAddress(String destination) {
         Geocoder coder = new Geocoder(this);
@@ -329,7 +341,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Request currentRequest = dataSnapshot.getValue(Request.class);
                 if(currentRequest.getStatus() == Request.STATUS.ACCEPTED){
-                    hideDialog();
+                    //hideDialog();
                     Log.d("SureWalk","Request has been accepted");
 
                     //Notify Requester - Request has been accepted

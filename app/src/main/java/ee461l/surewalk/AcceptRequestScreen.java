@@ -1,14 +1,20 @@
 package ee461l.surewalk;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -50,8 +56,7 @@ import Users.Walker;
 public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener
-{
+        LocationListener {
     public static final String TAG = AcceptRequestScreen.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -90,7 +95,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null){
+        if (extras != null) {
             requestKey = extras.getString("RequestID");
         }
 
@@ -140,13 +145,14 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
         btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if(currentRequest != null){
+                if (currentRequest != null) {
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
                     currentRequest.setWalker(FirebaseVariables.getCurrentWalker());
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
                     Intent intent = new Intent(AcceptRequestScreen.this, WalkerCurrentlyWalkingScreen.class);
                     intent.putExtra("RequestInfo",(new Gson()).toJson(currentRequest));
                     intent.putExtra("RequestKey",requestKey);
+                    setUpRequestListener(currentRequest);
                     startActivity(intent);
                     finish();
                 }
@@ -167,6 +173,17 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -201,8 +218,8 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
         walkerLocation = location; // Set the current location data to the current location
 
 
-        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Current Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+       // currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Current Location")
+        //        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         
@@ -245,7 +262,56 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocationMarker.remove();
-        handleNewLocation(location);
+        //currentLocationMarker.remove();
+        //handleNewLocation(location);
+    }
+    private void setUpRequestListener(final Request requestToWatch){
+        FirebaseVariables.setWalkerEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Request currentRequest = dataSnapshot.getValue(Request.class);
+                if(currentRequest.getStatus() == Request.STATUS.CANCELED){
+                    cancelHandling();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("SureWalk", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+        FirebaseVariables.getDatabaseReference().child("Requests").child(requestToWatch.getFirebaseId())
+                .addValueEventListener(FirebaseVariables.getWalkerEventListener());
+
+    }
+    public void cancelHandling(){
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String phoneNumber = currentRequest.getRequester().phoneNumber;
+                FirebaseVariables.getCurrentWalker().deleteRequest(currentRequest);
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+                        phoneIntent.setData(Uri.parse("tel:"+ phoneNumber));
+                        startActivity(phoneIntent);
+                        finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        Intent intent = new Intent(AcceptRequestScreen.this, WalkerHomeScreen.class);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Requester Cancelled Request.\nCall Walker?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 }
