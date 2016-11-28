@@ -56,8 +56,7 @@ import Users.Walker;
 public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener
-{
+        LocationListener {
     public static final String TAG = AcceptRequestScreen.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -96,7 +95,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null){
+        if (extras != null) {
             requestKey = extras.getString("RequestID");
         }
 
@@ -122,6 +121,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
                                 .load(profilePicutreRef)
                                 .into(profilePicture);
 
+
                         //Show location on map
                         LatLng requesterLoc = new LatLng(currentRequest.getCurrentLatitude(), currentRequest.getCurrentLongitude());
                         LatLng destinationLoc = new LatLng(currentRequest.getDestinationLatitude(), currentRequest.getDestinationLongitude());
@@ -146,7 +146,7 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
         btnAcceptRequest.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if(currentRequest != null){
+                if (currentRequest != null) {
                     currentRequest.setStatus(Request.STATUS.ACCEPTED);
                     currentRequest.setWalker(FirebaseVariables.getCurrentWalker());
                     FirebaseVariables.getDatabaseReference().child("Requests").child(requestKey).setValue(currentRequest);
@@ -174,6 +174,17 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -208,8 +219,8 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
         walkerLocation = location; // Set the current location data to the current location
 
 
-        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Current Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+       // currentLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Current Location")
+        //        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         
@@ -252,8 +263,8 @@ public class AcceptRequestScreen extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocationMarker.remove();
-        handleNewLocation(location);
+        //currentLocationMarker.remove();
+        //handleNewLocation(location);
     }
     private void setUpRequestListener(final Request requestToWatch){
         FirebaseVariables.setWalkerEventListener(new ValueEventListener() {
