@@ -67,6 +67,15 @@ public class RequesterCurrentlyWalkingScreen extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.RequesterCurrentlyWalkingMap);
         mapFragment.getMapAsync(this);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
         profilePicture = (ImageView) findViewById(R.id.RequesterPicture);
         txtName = (TextView) findViewById(R.id.WalkerName);
         btnCallWalker = (Button) findViewById(R.id.CallRequester);
