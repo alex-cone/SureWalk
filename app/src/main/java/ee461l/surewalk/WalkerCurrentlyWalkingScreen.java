@@ -192,9 +192,9 @@ public class WalkerCurrentlyWalkingScreen extends FragmentActivity implements On
             return;
         }
         mMap.setMyLocationEnabled(true);
-        LatLng requester1 = new LatLng(currentRequest.getCurrentLatitude(), currentRequest.getCurrentLongitude());
+        LatLng requester = new LatLng(currentRequest.getCurrentLatitude(), currentRequest.getCurrentLongitude());
         LatLng destination = new LatLng(currentRequest.getDestinationLatitude(), currentRequest.getDestinationLongitude());
-        mMap.addMarker(new MarkerOptions().position(requester1));
+        mMap.addMarker(new MarkerOptions().position(requester));
         mMap.addMarker(new MarkerOptions().position(destination).title("Destination")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
     }
