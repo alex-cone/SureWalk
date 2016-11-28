@@ -118,7 +118,7 @@ public class WalkerCurrentlyWalkingScreen extends AppCompatActivity {
                     case DialogInterface.BUTTON_POSITIVE:
                         //Yes button clicked
                         if(status == 0) {
-                            currentRequest.setStatus(Request.STATUS.CANCELED);
+                            FirebaseVariables.getCurrentWalker().cancelRequest(currentRequest);
                         }
                         else if(status == 1){
                             currentRequest.setStatus(Request.STATUS.COMPLETED);
