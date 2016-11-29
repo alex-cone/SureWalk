@@ -145,7 +145,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
                     destinationLocData = destAddress;
 
                     //Geocoder can find the location specified
-                    if(destAddress != null || !address.equals(" ") ){
+                    if(destAddress != null){
                         //Disable all text fields so you cant change while requesting
                         disableText(address1);
                         disableText(address2);
