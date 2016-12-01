@@ -82,6 +82,16 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     private Address destinationLocData;
     private ProgressDialog pDialog;
 
+    public Location getLocation() {
+        return currentLocData;
+    }
+
+    public Address getAddress() {
+        return destinationLocData;
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
