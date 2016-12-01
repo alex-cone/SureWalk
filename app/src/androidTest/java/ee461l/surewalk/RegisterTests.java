@@ -114,6 +114,117 @@ public class RegisterTests extends ActivityInstrumentationTestCase2<RegisterActi
         assertNull(FirebaseVariables.getFireBaseAuth().getCurrentUser());
     }
 
+    @Test
+    public void testFalseEmail() {
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputFullName.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("Bob");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputEmail.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("bob@utxas.edu");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputPassword.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("thisisBob");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                confirmPassword.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("thisisBob");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputPhoneNumber.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("5555555555");
+        getInstrumentation().waitForIdleSync();
+
+        TouchUtils.clickView(this, btnRegister);
+        assertNull(FirebaseVariables.getFireBaseAuth().getCurrentUser());
+    }
+
+    @Test
+    public void testIncorrectPassword() {
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputFullName.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("Bob");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputEmail.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("bob@utxas.edu");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputPassword.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("thisisBob");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                confirmPassword.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("blah");
+        getInstrumentation().waitForIdleSync();
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                inputPhoneNumber.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().sendStringSync("5555555555");
+        getInstrumentation().waitForIdleSync();
+
+        TouchUtils.clickView(this, btnRegister);
+        assertNull(FirebaseVariables.getFireBaseAuth().getCurrentUser());
+    }
 
 
 
