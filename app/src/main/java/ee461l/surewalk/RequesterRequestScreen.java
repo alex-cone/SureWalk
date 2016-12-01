@@ -71,7 +71,7 @@ public class RequesterRequestScreen extends FragmentActivity implements OnMapRea
     //private Marker currentLocationMarker;
 
     private Request currentRequest;
-    private  Button requestButton;
+    private Button requestButton;
     private EditText address1;
     private EditText address2;
     private EditText commentsText;
