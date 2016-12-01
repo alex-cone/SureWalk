@@ -1,5 +1,6 @@
 package ee461l.surewalk;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import Users.Request;
 public class FeedbackActivity extends AppCompatActivity {
     private EditText feedback;
     private Button btnSubmit;
+    public static String feedbackMsg;
+    public static Request request;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,16 +39,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 try {
                     String fromEmail = "utexassurewalk@gmail.com";
                     String fromPassword = "EE461LIsFun";
-                    String toEmails = "utexassurewalk@gmail.com";
-                    List<String> toEmailList;
-                    toEmailList = new ArrayList<String>();
-                    toEmailList.add(toEmails);
-                    String emailSubject = "User Feedback from " + FirebaseVariables.getCurrentRequester().username;
-                    String emailBody = "Username: " + FirebaseVariables.getCurrentRequester().username + "\n\n"
-                            + "Email: " + FirebaseVariables.getCurrentRequester().email + "\n\n"
-                            + "Surewalker: " + currentRequest.getWalker().username +"\n\n"
-                            + "Message:\n" + feedbackMessage;
-                    new SendMailTask(FeedbackActivity.this).execute(fromEmail, fromPassword, toEmailList, emailSubject, emailBody);
+                    sendFeedback(fromEmail, fromPassword, currentRequest, feedbackMessage, FeedbackActivity.this);
                     Intent intent = new Intent(FeedbackActivity.this, RequesterHomeScreen.class);
                     startActivity(intent);
                     finish();
@@ -55,5 +49,19 @@ public class FeedbackActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public static void sendFeedback(String fromEmail, String fromPassword, Request currentRequest, String feedbackMessage, Activity activity){
+        String toEmails = "utexassurewalk@gmail.com";
+        feedbackMsg = feedbackMessage;
+        List<String> toEmailList;
+        toEmailList = new ArrayList<String>();
+        toEmailList.add(toEmails);
+        String emailSubject = "User Feedback from " + currentRequest.getRequester().username;
+        String emailBody = "Username: " + currentRequest.getRequester().username + "\n\n"
+                + "Email: " + currentRequest.getRequester().email + "\n\n"
+                + "Surewalker: " + currentRequest.getWalker().username +"\n\n"
+                + "Message:\n" + feedbackMessage;
+        new SendMailTask(activity).execute(fromEmail, fromPassword, toEmailList, emailSubject, emailBody);
+        return;
     }
 }

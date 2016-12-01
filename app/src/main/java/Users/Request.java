@@ -43,6 +43,10 @@ public class Request {
         this.walker = walker;
     }
 
+    public void setRequester(Requester requester){
+        this.requester = requester;
+    }
+
     public void setRequest(Walker walker, Requester requester, double currLocLat,
                            double currLocLong, double destinationLocLat, double destinationLocLong, String firebaseId,
                            String comments){
