@@ -43,5 +43,8 @@ dependencies {
     compile files('libs/additionnal.jar')
     compile files('libs/mail.jar')
     compile 'com.google.android.gms:play-services-maps:9.8.0'
+    //required for instrumented
+    androidTestCompile 'com.android.support:support-annotations:24.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
 }
 apply plugin: 'com.google.gms.google-services'

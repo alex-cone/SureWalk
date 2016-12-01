@@ -41,6 +41,4 @@ public class FirebaseVariables {
     public static void setWalkerEventListener(ValueEventListener newWalkerEventListener){walkerEventListener = newWalkerEventListener;}
     public static ValueEventListener getWalkerEventListener(){return walkerEventListener;}
 
-    private FirebaseVariables() {
-    }
 }
