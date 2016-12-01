@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
-import org.robolectric.shadows.*;
 public class LoginTests extends ActivityInstrumentationTestCase2<LoginActivity>{
     LoginActivity mActivity;
     private EditText inputEmail;
